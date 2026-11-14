@@ -6,10 +6,12 @@ Status: Accepted (Lars, 2026-11-14). Three details are Claude's defaults, marked
 
 Single player first, to keep it simple. Teams can come later. A push-your-luck game alone needs something that makes locking in a real choice.
 
+The mechanic is that of tabletop timeline games with a push-your-luck turn. Only the mechanic is shared; name, cards and look are this project's own.
+
 ## Decision
 
 - The goal is a timeline of N cards. N is a setting, default 10.
-- Each turn the player draws and places one card at a time. After a correct placement they draw another or lock in. A miss loses every card gained that turn.
+- Each turn the player draws and places one card at a time. Confirming a placement reveals the date; cards are not tappable. After a correct placement they draw another or lock in. A miss loses every card gained that turn.
 - The score is the number of turns used to reach N. Fewer is better. The best score is kept on the device.
 
 Defaults not yet confirmed:

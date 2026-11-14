@@ -1,6 +1,6 @@
 # 0008: Build loop with one builder and one reviewer
 
-Status: Accepted in outline (Lars, 2026-11-14). Scope and git rules are Claude's defaults; Lars had no preference.
+Status: Accepted (Lars, 2026-11-14 and 2026-11-15).
 
 ## Context
 
@@ -16,6 +16,7 @@ One orchestrator, one builder, one reviewer. Tasks run in sequence. State lives 
 - The orchestrator fixes the findings that make sense. No second review, no judge.
 - Defects in the current task are fixed. New features and matters of taste go to `docs/IDEAS.md` for Lars.
 - After each task: commit, push to main, update `docs/STATE.md`.
+- Screens are built plain with one theme file; a Claude Design handoff is applied later as its own restyle task.
 - The loop stops when the backlog is done, when a task fails the gate twice, or when a decision is Lars's to make.
 
 ## Consequences

@@ -5,6 +5,8 @@ The player places event cards in the right order on a timeline and pushes their 
 
 Decisions are recorded in `docs/adr/`. This file is the summary; when the two disagree, the ADR wins.
 
+The game belongs to the same family as tabletop timeline games, where you place events in order and decide whether to push on. It shares the mechanic only. The name, every card text and the visual design are this project's own; nothing is copied from a published game.
+
 ## Layers
 
 | Layer | What it does | Where it runs |
@@ -15,9 +17,9 @@ Decisions are recorded in `docs/adr/`. This file is the summary; when the two di
 
 ## Game rules (version 1, single player)
 
-1. **Setup.** The player ticks decks, sets the personal share slider, optional filters, and the target (default 10 cards).
+1. **Setup.** The player ticks decks, sets the personal share slider and the target (default 10 cards).
 2. **Start.** One card is dealt face up on the timeline. It is locked and counts toward the target.
-3. **Turn.** The player draws a card. Only its title is visible. They tap a gap on the timeline to place it.
+3. **Turn.** The player draws a card. Only its title is visible. They tap a gap on the timeline and confirm. Confirming reveals the date and the reveal line; cards themselves are not tappable.
    - **Correct:** the card stays on the timeline with its date showing, marked as pending. The player chooses *draw another* or *lock in*.
    - **Miss:** the correct date is shown, then the missed card and every pending card from this turn are removed. The turn ends.
    - **Lock in:** all pending cards become permanent. The turn ends.
@@ -35,18 +37,18 @@ Details:
 
 - Norwegian only, phone first. Works on a laptop too.
 - Vertical timeline, oldest at the top. Place by tapping a gap, then confirm. No drag and drop in version 1.
-- **Start screen:** deck ticks, one slider for the share of personal cards against history (default 50%), history filters (category, period from and to, difficulty), target, judging precision. The last choice is remembered.
+- **Start screen:** deck ticks, one slider for the share of personal cards against history (default 50%), target, judging precision. The last choice is remembered. No filters in version 1.
 - **Code entry:** hidden behind tapping the title five times. Typing a code reveals every deck that code belongs to. The device remembers its codes.
 - **Editor:** appears for decks where the device holds an edit code. Add, change and delete cards.
 - **Result screen:** turns used, personal best, play again with the same settings.
+- **Look:** built plain first, with every colour, font and spacing value in one theme file. The visual design comes from a Claude Design handoff (`docs/design-prompt.md`) and is applied in a restyle task.
 - **For agents and tests:** `?seed=<n>` makes the shuffle repeatable, and a bundled fixture deck of fictional and public history cards lets the game run with no backend.
 
 ## Data
 
 - **Deck:** name, visibility (`public` or `private`). The history deck is an ordinary public deck.
-- **Card:** belongs to one deck. Title (shown while placing), reveal line (optional, shown with the date after placing), year, optional month, optional day, category, difficulty, source reference.
+- **Card:** belongs to one deck. Title (shown while placing), reveal line (optional, shown with the date after placing), year, optional month, optional day, source reference.
   - The date is stored as precisely as it is known. Year is a signed integer so dates before year 1 work.
-  - Category and difficulty are required for history cards and optional for personal cards.
 - **Code:** stored hashed, with a role (`play` or `edit`) and the decks it opens. One master edit code opens everything.
 - All cards live in the database, history included. Personal cards never enter the git repo.
 - **History deck:** candidates from Wikidata, curated and written in Norwegian by an AI pass. First target is about 1000 cards.
@@ -60,18 +62,15 @@ Details:
 
 ## Out of scope for version 1
 
-Teams and multiplayer, accounts and profiles, photos on cards, English, drag and drop, offline play.
+Teams and multiplayer, accounts and profiles, photos on cards, filters on the history deck, English, drag and drop, offline play.
 These are parked in `docs/IDEAS.md`.
 
 ## Defaults chosen by Claude, not yet confirmed by Lars
 
-Lars answered "no preference" or was not asked. Change any of these by saying so.
+Lars was not asked about these. Change any of them by saying so.
 
 - The start card counts toward the target.
 - Missed and lost cards are discarded for the rest of the game.
 - Reaching the target with pending cards wins at once, without a separate lock in.
-- Text only cards with a reveal line; no photos.
-- Category, period and difficulty filters are all on the start screen.
 - Tap a gap to place; vertical timeline.
 - Client stack: React, TypeScript, Vite, Vitest, Playwright (ADR 0009).
-- Loop fixes defects and parks ideas; commits and pushes to main after each task (ADR 0008).

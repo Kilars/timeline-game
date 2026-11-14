@@ -7,14 +7,14 @@ Tags: **V1** is in the first build. **Later** is parked in `IDEAS.md` until Lars
 | # | Story | Tag |
 |---|---|---|
 | P1 | As a player I open the link on my phone and start a game with the history deck in two taps, with no login. | V1 |
-| P2 | As a player I see the title of a drawn card and tap the gap on the timeline where I think it belongs. | V1 |
+| P2 | As a player I see the title of a drawn card, tap the gap on the timeline where I think it belongs, and confirm to reveal the date. | V1 |
 | P3 | As a player, after a correct placement I choose between drawing another card and locking in what I have gained this turn. | V1 |
 | P4 | As a player, when I miss I see the correct date and which cards I lost, so I learn something from it. | V1 |
 | P5 | As a player I see how many turns I have used and how many cards I need, at all times. | V1 |
 | P6 | As a player I see my score when I reach the target, my best score so far, and can play again with the same settings. | V1 |
 | P7 | As a player I change the target from 10 to another number. | V1 |
 | P8 | As a player I tick which decks to play with and set how large a share of the cards are personal. | V1 |
-| P9 | As a player I narrow the history deck by category, period and difficulty. | V1 |
+| P9 | As a player I narrow the history deck by category, period and difficulty. | Later |
 | P10 | As a player I type a code I was given and the family deck appears on my phone, and stays there. | V1 |
 | P11 | As a player I am never unfairly marked wrong when two cards share a year. | V1 |
 | P12 | As a player I switch judging from year to exact date for a harder game with personal cards. | V1 |

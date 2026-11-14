@@ -11,3 +11,4 @@ Parked features and suggestions. Nothing here is built until Lars moves it to th
 | Install to home screen, offline play | Claude | |
 | English card text and menus | Grilling session | Lars chose Norwegian only for now |
 | Drag and drop placement | Claude | Tap a gap is version 1 |
+| Filters on the history deck: category, period, difficulty | Lars chose none for now, 2026-11-15 | Period needs no new data; the other two need tags from the import |

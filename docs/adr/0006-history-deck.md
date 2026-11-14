@@ -11,7 +11,7 @@ Legal position: dates are facts and cannot be copyrighted. Wikidata is CC0 (publ
 ## Decision
 
 1. A script queries Wikidata for events, inventions, births, deaths and works with a date, ranked by the number of Wikipedia language editions covering them.
-2. An AI pass picks the recognisable ones, writes a short Norwegian title and reveal line, and tags category and difficulty.
+2. An AI pass picks the recognisable ones, and writes a short Norwegian title and reveal line. No category or difficulty tags in version 1, since there are no filters.
 3. Each card keeps its Wikidata id as source reference.
 4. The result is loaded into the database as the public history deck.
 
