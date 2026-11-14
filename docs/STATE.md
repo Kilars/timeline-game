@@ -23,12 +23,12 @@ Notes from the T1 review for coming tasks:
 ## Waiting on Lars
 
 1. **Backend host** (ADR 0007). Blocks only T8.
-2. **Design handoff** from Claude Design. Blocks only T9.
+2. **Design handoff:** arrived on Lars's private Design canvas on 2026-11-15 (16 artboards: seven screens, dark mode, the game at 1280, card states, tokens, motion, developer handoff). Lars has not yet said it is final. The canvas link is kept out of this public repo; the orchestrator session has it. Before T9, fetch the artboards into the git-ignored folder `design-handoff/`.
 3. Optional: overrule any default listed at the bottom of `SPEC.md`.
 
 ## Next task
 
-T2 (with the builder), then T3.
+T2 (with the builder), then T3, then T9 (restyle), so that T5 and T6 build their screens in the design from the start.
 
 ## Backlog
 
@@ -43,4 +43,4 @@ T2 (with the builder), then T3.
 | T6 | Editor: edit codes, add, change and delete cards, create decks | Stories A1 to A4, O1 | Not started |
 | T7 | History import: Wikidata query script, AI curation to about 1000 Norwegian cards, load into the database | Story O5; a sample of 50 cards checked against Wikidata by the reviewer | Not started |
 | T8 | Backend deploy | The live site plays against the hosted backend from a phone | Blocked on ADR 0007 |
-| T9 | Restyle from the Claude Design handoff | Screens match the handoff at phone size; gate passes | Blocked on the handoff |
+| T9 | Restyle from the Claude Design handoff. Runs after T3 | Game and start screens match the handoff at phone size, light and dark; gate passes | Ready after T3 |
