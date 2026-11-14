@@ -31,7 +31,8 @@ Details:
 - A card removed by a miss is not drawn again in the same game.
 - No card appears twice in one game.
 - If the personal decks run out, the remaining draws come from history. If everything runs out, the game ends and says so.
-- **Judging.** Cards are compared at the judging precision, a setting with default *year*. Two cards with the same value at that precision are a tie, and a tie is correct on either side.
+- **Judging.** Cards are compared at the judging precision, a setting with default *year*. Two cards with the same value at that precision are a tie, and a tie is correct on either side. A placement is judged against every card on the timeline, not only its two neighbours.
+- **Mix.** Each draw, the start card included, rolls against the personal share: personal decks or the history deck.
 
 ## Client
 
@@ -46,7 +47,7 @@ Details:
 
 ## Data
 
-- **Deck:** name, visibility (`public` or `private`). The history deck is an ordinary public deck.
+- **Deck:** name, visibility (`public` or `private`), kind (`history` or `personal`). The kind decides which side of the mix slider a deck's cards fall on. The history deck is an ordinary public deck of kind `history`.
 - **Card:** belongs to one deck. Title (shown while placing), reveal line (optional, shown with the date after placing), year, optional month, optional day, source reference.
   - The date is stored as precisely as it is known. Year is a signed integer so dates before year 1 work.
 - **Code:** stored hashed, with a role (`play` or `edit`) and the decks it opens. One master edit code opens everything.

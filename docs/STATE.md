@@ -4,7 +4,9 @@ Updated: 2026-11-15
 
 ## Current state
 
-Lars said go on 2026-11-14. Public repo Kilars/timeline-game exists, Pages is enabled (build type: workflow). T0 is with the builder.
+Lars said go on 2026-11-14. Public repo Kilars/timeline-game exists. T0 is done: the scaffold is live at https://kilars.github.io/timeline-game/ (placeholder page), `npm run check` is the gate, `npm run play` saves phone-size screenshots to `artifacts/play/`. Every push to main runs the gate and deploys.
+
+Known quirk: headless Chrome hangs on a cold start on Lars's laptop unless `--disable-gpu` is set (it is, in `e2e/phone.ts`). The cause is not known.
 
 Decided 2026-11-15: no filters in version 1; reveal happens on confirming a placement; screens are built plain with one theme file and restyled from a Claude Design handoff (prompt in `design-prompt.md`).
 
@@ -16,14 +18,14 @@ Decided 2026-11-15: no filters in version 1; reveal happens on confirming a plac
 
 ## Next task
 
-T0 (in progress), then T1.
+T1 (with the builder), then T2.
 
 ## Backlog
 
 | # | Task | Done when | Status |
 |---|---|---|---|
-| T0 | Repo and tooling: git repo, public GitHub repo, Vite + React + TypeScript scaffold, Vitest, Playwright, `npm run check`, `npm run play`, Pages deploy workflow | An empty page is live on Pages and the gate passes | In progress |
-| T1 | Game rules as a pure module: turns, pending and locked cards, miss, lock in, win, judging with precision and ties, draw with deck mix and no repeats, seeded shuffle | Unit tests cover every rule in SPEC "Game rules" | Not started |
+| T0 | Repo and tooling: git repo, public GitHub repo, Vite + React + TypeScript scaffold, Vitest, Playwright, `npm run check`, `npm run play`, Pages deploy workflow | An empty page is live on Pages and the gate passes | Done 2026-11-15 |
+| T1 | Game rules as a pure module: turns, pending and locked cards, miss, lock in, win, judging with precision and ties, draw with deck mix and no repeats, seeded shuffle | Unit tests cover every rule in SPEC "Game rules" | In progress |
 | T2 | Game screen on the fixture deck: vertical timeline, tap a gap, reveal, draw another or lock in, miss feedback, result screen with personal best; all colours, fonts and spacing in one theme file | `npm run play` completes a full game; stories P2 to P6, P11 | Not started |
 | T3 | Start screen: deck ticks, mix slider, target, judging precision, remembered settings | Stories P1, P7, P8, P12 | Not started |
 | T4 | API and local database: schema, read endpoints for decks and cards, seed script, client reads from the API | The game runs locally against the API; fixture deck still used in tests | Not started |
