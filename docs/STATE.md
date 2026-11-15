@@ -16,9 +16,12 @@ T2 is done: the game screen is built in the design (src/ui/, tokens in src/theme
 
 T3 is done: the app opens on the start screen (src/ui/Start.tsx) with deck ticks, the mix slider, the target and the judging precision, remembered on the device (src/ui/settings.ts). src/ui/setup.ts turns the choices into a game; the mix itself is applied by the rules, which fall back to the other pile when one runs out. The fixture now has two decks, "Historie" and the fictional "Familien Testesen". The result screen has "Til start". The review found three defects, all fixed: a disabled "Spill" looked active; "Spill" was below the fold on short phones (it now sticks to the foot); the UI dropped whole decks at 0 % and 100 %, against the spec's fallback.
 
+T4 is done: a Hono API over SQLite in `api/` (Node's built-in `node:sqlite` locally; the `Database` interface is async so D1 can implement it). Schema in `api/migrations/0001_init.sql`: decks, cards, and the codes tables for T5. `GET /decks` and `GET /decks/:id/cards` serve public decks only; a private deck gets the same 404 as an unknown one. `npm run api:seed`, `npm run api` and `npm run dev:api` run it locally (README). The client reads the API when built with `VITE_API_URL`, otherwise the bundled fixture, so the live site and the tests still use the fixture. The reviewer found no defects; ideas are in `IDEAS.md`.
+
 Notes for coming tasks:
 
-- T4: decks come from the API; keep the `Deck` shape in src/ui/setup.ts (id, name, kind, visibility, cards).
+- T5: `codes.hash` is a unique lookup hash, so short play codes need a server-side pepper (a secret on the server, never in the repo).
+- T8: add a health route for the host's checks.
 - T5: the fixture family deck is marked private but listed without a code, so the live site shows "Familien Testesen · Privat" until T5 hides private decks.
 - T5: code entry per ADR 0003 as updated 2026-11-15: no feedback on the taps, one text field made for pasting a long code.
 - T4: map database NULL month and day to absent before creating a game.
@@ -31,7 +34,7 @@ Notes for coming tasks:
 
 ## Next task
 
-T4: API and local database. It needs no screen from the design.
+T5: codes. Build it in the design (board "6 Code entry", `design-handoff/CodeEntry.dc.html`).
 
 ## Backlog
 
@@ -41,7 +44,7 @@ T4: API and local database. It needs no screen from the design.
 | T1 | Game rules as a pure module: turns, pending and locked cards, miss, lock in, win, judging with precision and ties, draw with deck mix and no repeats, seeded shuffle | Unit tests cover every rule in SPEC "Game rules" | Done 2026-11-15 |
 | T2 | Game screen on the fixture deck: vertical timeline, tap a gap, reveal, draw another or lock in, miss feedback, result screen with personal best; all colours, fonts and spacing in one theme file | `npm run play` completes a full game; stories P2 to P6, P11 | Done 2026-11-15 |
 | T3 | Start screen: deck ticks, mix slider, target, judging precision, remembered settings | Stories P1, P7, P8, P12 | Done 2026-11-15 |
-| T4 | API and local database: schema, read endpoints for decks and cards, seed script, client reads from the API | The game runs locally against the API; fixture deck still used in tests | Not started |
+| T4 | API and local database: schema, read endpoints for decks and cards, seed script, client reads from the API | The game runs locally against the API; fixture deck still used in tests | Done 2026-11-15 |
 | T5 | Codes: private decks, play codes, hidden code entry, hashed storage, rate limit | Stories P10, O2 to O4, O6; a test proves a private deck is not returned without its code | Not started |
 | T6 | Editor: edit codes, add, change and delete cards, create decks | Stories A1 to A4, O1 | Not started |
 | T7 | History import: Wikidata query script, AI curation to about 1000 Norwegian cards, load into the database | Story O5; a sample of 50 cards checked against Wikidata by the reviewer | Not started |

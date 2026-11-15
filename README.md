@@ -15,8 +15,9 @@ npm run play         # plays one full game in headless Chrome at phone size, see
 npm run play -- 42   # the same with seed 42
 ```
 
-Opening the app starts a game straight away, with the default settings (10 cards, judged by
-year), on a bundled fixture deck. There is no start screen and no backend yet.
+The app opens on the start screen. Built without an API address, as above, it plays the bundled
+fixture decks; that is what the tests, `npm run play` and the live site use until a backend is
+deployed (T8).
 
 - `?seed=<integer>` in the address fixes the game: the same seed always deals the same cards.
   Without it a seed is picked by chance, and "Spill igjen" always picks a new one.
@@ -29,6 +30,32 @@ cards, a miss on purpose that loses a pending card, and the result screen. It fi
 the way the end-to-end tests do (`e2e/helpers.ts`): it reads the cards on screen, looks them up in
 the fixture deck and asks the rules. The app has no debug hook.
 
+## Run against the API
+
+The API (`api/`) serves decks and cards from a SQLite database. It runs on this machine with no
+cloud account, on Node's built-in SQLite.
+
+```sh
+npm run api:seed     # creates api/local.sqlite (git-ignored) and loads the fixture decks into it
+npm run api          # serves it at http://127.0.0.1:8787
+npm run dev:api      # in another terminal: the client at http://localhost:5173/timeline-game/, reading the API
+```
+
+The client reads the API when it is built with `VITE_API_URL` set, and plays the bundled fixture
+decks when it is not. A production build against the local API:
+`VITE_API_URL=http://127.0.0.1:8787 npm run build && npm run preview`.
+
+- `GET /decks` lists the public decks: `{ decks: [{ id, name, visibility, kind }] }`.
+- `GET /decks/:id/cards` gives a public deck's cards: `{ cards: [{ id, title, reveal?, year,
+  month?, day?, source? }] }`. A field that is empty in the database is left out, never sent as
+  null. An unknown deck and a private one both get 404 `{ "error": "not_found" }`.
+- Private decks are never returned. Codes that open them come in T5. The fixture family deck is
+  private, so it is seeded but not served.
+- The API is read only. The schema is in `api/migrations/` and is applied on start and on seed.
+- Settings: `API_PORT` (8787), `API_HOST` (127.0.0.1), `API_DB` (`api/local.sqlite`) and
+  `API_ORIGINS`, a comma-separated list of web origins allowed to call it. The default allows
+  `https://kilars.github.io` and the local client on ports 5173 and 4173.
+
 ## Layout
 
 - `src/` is the client.
@@ -39,6 +66,12 @@ the fixture deck and asks the rules. The app has no debug hook.
     (dates, best score, seed, the session on top of the rules).
   - `src/theme.css` holds every colour, font, size, spacing, radius, shadow and timing as a
     `--tl-*` variable, light and dark. The component styles in `src/ui/*.css` use only those.
-- `e2e/` holds the end-to-end tests and their helpers, `scripts/` the play script.
+  - `src/data/` reads the decks from the API and checks what comes back.
+- `api/` is the API: a [Hono](https://hono.dev) app (`api/src/app.ts`) over a small database
+  interface (`api/src/db.ts`), so the same app can run on Node now and on a hosted runtime later
+  (ADR 0007). `api/src/sqlite.ts` implements the interface with `node:sqlite`. Its tests are in
+  `api/src/` and run with the unit tests.
+- `e2e/` holds the end-to-end tests and their helpers, `scripts/` the play script. `e2e/api.spec.ts`
+  starts the API over a seeded in-memory database, builds the client against it and plays a game.
 - `docs/` holds the spec (`SPEC.md`), the current state (`STATE.md`), how work is done
   (`WORKFLOW.md`) and the decisions (`adr/`).

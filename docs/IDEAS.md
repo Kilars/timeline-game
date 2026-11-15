@@ -25,3 +25,12 @@ Parked features and suggestions. Nothing here is built until Lars moves it to th
 | Dim the slider's end labels when it is disabled | T3 review | "Bare historie" on the left reads oddly next to "Bare personlige kort" |
 | Keep "Kort for å vinne" on one line at 360 wide | T3 review | Wraps to two lines |
 | Smoother band behind the sticky "Spill" | Orchestrator, T3 | On short phones the solid band cuts across the checked background |
+| Seed script: handle cards that move between decks and decks removed from the fixture | T4 review | Harmless with today's fixture |
+| Run each local migration and its record in one transaction | T4 review | A crash in between now needs the local file deleted |
+| Keep `exec` and `migrate` out of the app-facing `Database` interface | T4 review | The app uses only `all`, `first` and `batch`; D1 would use wrangler migrations |
+| Same `?seed=` deals the same game with and without the API | T4 review | The API orders cards by id, the bundle by source order |
+| A notice when the API lists no decks | T4 review | The start screen shows an empty deck box |
+| Tell a network failure from a server error in the load error text | T4 review | Always says "Sjekk nettet" |
+| More room between the error text and "Prøv igjen" | T4 review | |
+| Check that a day fits its month in the schema | T4 review | 30 February is accepted |
+| README: running the API for a phone on the LAN | T4 review | `dev:api` points at 127.0.0.1 and uses POSIX env syntax |

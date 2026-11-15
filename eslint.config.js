@@ -14,6 +14,20 @@ export default defineConfig(
     files: ['src/**/*.{ts,tsx}'],
     extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
     languageOptions: { globals: globals.browser },
+    rules: {
+      // The client may take the API's wire types, and nothing else: the API's code runs in Node.
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '(^|/)api/(?!src/types\\.ts$)',
+              message: 'The client may import only api/src/types.ts from the API.',
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     // The rules of the game are pure: nothing from outside src/game/, no browser, no network,
@@ -43,8 +57,8 @@ export default defineConfig(
     },
   },
   {
-    // Tooling that runs in Node: configs, end-to-end tests and scripts.
-    files: ['*.{js,ts}', 'e2e/**/*.ts', 'scripts/**/*.ts'],
+    // Tooling and the API, which run in Node: configs, end-to-end tests, scripts and api/.
+    files: ['*.{js,ts}', 'e2e/**/*.ts', 'scripts/**/*.ts', 'api/**/*.ts'],
     languageOptions: { globals: globals.node },
   },
 )
