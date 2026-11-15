@@ -16,8 +16,8 @@ npm run play -- 42   # the same with seed 42
 ```
 
 The app opens on the start screen. Built without an API address, as above, it plays the bundled
-fixture decks; that is what the tests, `npm run play` and the live site use until a backend is
-deployed (T8).
+fixture decks; that is what the tests and `npm run play` use. The live site is built against the
+hosted API (see below).
 
 - `?seed=<integer>` in the address fixes the game: the same seed always deals the same cards.
   Without it a seed is picked by chance, and "Spill igjen" always picks a new one.
@@ -55,6 +55,24 @@ decks when it is not. A production build against the local API:
 - Settings: `API_PORT` (8787), `API_HOST` (127.0.0.1), `API_DB` (`api/local.sqlite`) and
   `API_ORIGINS`, a comma-separated list of web origins allowed to call it. The default allows
   `https://kilars.github.io` and the local client on ports 5173 and 4173.
+
+## Hosted API
+
+The live API is a Cloudflare Worker over D1 (ADR 0007): https://tidslinje-api.kilars.workers.dev.
+`api/worker.ts` is its entry, `api/src/d1.ts` the D1 version of the database interface, and
+`wrangler.jsonc` its configuration. On every push to main, GitHub Actions runs the gate, applies
+new files in `api/migrations/` to D1, deploys the Worker, and then builds the site with
+`VITE_API_URL` set to it. It needs the secrets `CLOUDFLARE_API_TOKEN` and
+`CLOUDFLARE_ACCOUNT_ID` on the `github-pages` environment.
+
+By hand, with those two set in the environment:
+
+```sh
+npx wrangler@4.156.0 d1 migrations apply tidslinje --remote   # the schema
+npm run -s api:seed-sql > seed.sql                              # the public fixture decks as SQL
+npx wrangler@4.156.0 d1 execute tidslinje --remote --file seed.sql
+npx wrangler@4.156.0 deploy                                     # the Worker
+```
 
 ## Layout
 

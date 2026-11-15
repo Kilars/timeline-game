@@ -18,17 +18,18 @@ T3 is done: the app opens on the start screen (src/ui/Start.tsx) with deck ticks
 
 T4 is done: a Hono API over SQLite in `api/` (Node's built-in `node:sqlite` locally; the `Database` interface is async so D1 can implement it). Schema in `api/migrations/0001_init.sql`: decks, cards, and the codes tables for T5. `GET /decks` and `GET /decks/:id/cards` serve public decks only; a private deck gets the same 404 as an unknown one. `npm run api:seed`, `npm run api` and `npm run dev:api` run it locally (README). The client reads the API when built with `VITE_API_URL`, otherwise the bundled fixture, so the live site and the tests still use the fixture. The reviewer found no defects; ideas are in `IDEAS.md`.
 
+T8 brought forward on 2026-11-15 with Lars's yes: the T4 API runs on Cloudflare Workers + D1 at https://tidslinje-api.kilars.workers.dev (D1 database `tidslinje`, seeded with the public history fixture deck, 44 cards). CI applies migrations, deploys the Worker, then builds the site against it. Still open for T8: a health route, and a regular backup export.
+
 Notes for coming tasks:
 
-- T5: `codes.hash` is a unique lookup hash, so short play codes need a server-side pepper (a secret on the server, never in the repo).
-- T8: add a health route for the host's checks.
-- T5: the fixture family deck is marked private but listed without a code, so the live site shows "Familien Testesen · Privat" until T5 hides private decks.
+- T5: `codes.hash` is a unique lookup hash, so short play codes need a server-side pepper: a Worker secret (`wrangler secret put`), never in the repo.
+- T5: a new migration file is applied to D1 by CI on push; test it locally first.
 - T5: code entry per ADR 0003 as updated 2026-11-15: no feedback on the taps, one text field made for pasting a long code.
-- T4: map database NULL month and day to absent before creating a game.
+- T8: add a health route for the host's checks.
 
 ## Waiting on Lars
 
-1. **Backend host:** decided 2026-11-15, Cloudflare Workers + D1 (ADR 0007). T8 still needs from Lars: a Cloudflare account, an API token as a GitHub secret, and an explicit yes for the first deploy.
+1. **Backend:** deployed 2026-11-15 on Cloudflare Workers + D1 (ADR 0007). The API answered from Lars's laptop on the home network, so Nettvern does not block `workers.dev` there; phones on mobile data are untested.
 2. **Design handoff:** arrived on Lars's private Design canvas on 2026-11-15 (16 artboards: seven screens, dark mode, the game at 1280, card states, tokens, motion, developer handoff). Lars has not said it is final; if it changes, T9 picks up the differences. The canvas link is kept out of this public repo; the orchestrator session has it. Before T9, fetch the artboards into the git-ignored folder `design-handoff/`.
 3. Optional: overrule any default listed at the bottom of `SPEC.md`.
 

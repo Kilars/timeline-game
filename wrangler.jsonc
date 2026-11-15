@@ -1,0 +1,20 @@
+// The API on Cloudflare Workers + D1 (ADR 0007). Deployed by GitHub Actions; see README.
+// The database id is not a secret: nothing can reach the database without an API token.
+{
+  "name": "tidslinje-api",
+  "main": "api/worker.ts",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "vars": {
+    // Only the live site may call the API from a browser.
+    "API_ORIGINS": "https://kilars.github.io"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tidslinje",
+      "database_id": "9a4e9eb0-ff97-4d7d-8ab3-ee8c4c7e5d2b",
+      "migrations_dir": "api/migrations"
+    }
+  ]
+}

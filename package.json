@@ -18,7 +18,8 @@
     "check": "npm run typecheck && npm run lint && npm run test && npm run e2e",
     "play": "node scripts/play.ts",
     "api": "node --disable-warning=ExperimentalWarning api/server.ts",
-    "api:seed": "node --disable-warning=ExperimentalWarning api/seed.ts"
+    "api:seed": "node --disable-warning=ExperimentalWarning api/seed.ts",
+    "api:seed-sql": "node api/seed-sql.ts"
   },
   "dependencies": {
     "@hono/node-server": "^2.1.8",

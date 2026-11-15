@@ -30,13 +30,41 @@ jobs:
       # End-to-end tests use the Chrome that is preinstalled on the runner.
       - run: npm run check
       - run: npm run build
+        env:
+          # The live site reads the decks from the hosted API (ADR 0007).
+          VITE_API_URL: https://tidslinje-api.kilars.workers.dev
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
-  deploy:
+  # The API on Cloudflare: schema first, then the Worker. Runs before the site, so a new client
+  # never meets an old API.
+  api:
     needs: build
+    runs-on: ubuntu-latest
+    # The Cloudflare secrets are kept on this environment, which deploys only from main.
+    environment: github-pages
+    timeout-minutes: 10
+    concurrency:
+      group: api
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx -y wrangler@4.156.0 d1 migrations apply tidslinje --remote
+      - run: npx -y wrangler@4.156.0 deploy
+
+  deploy:
+    needs: [build, api]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
