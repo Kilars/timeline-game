@@ -28,7 +28,7 @@ Notes for coming tasks:
 
 ## Waiting on Lars
 
-1. **Backend host** (ADR 0007). Blocks only T8.
+1. **Backend host:** decided 2026-11-15, Cloudflare Workers + D1 (ADR 0007). T8 still needs from Lars: a Cloudflare account, an API token as a GitHub secret, and an explicit yes for the first deploy.
 2. **Design handoff:** arrived on Lars's private Design canvas on 2026-11-15 (16 artboards: seven screens, dark mode, the game at 1280, card states, tokens, motion, developer handoff). Lars has not said it is final; if it changes, T9 picks up the differences. The canvas link is kept out of this public repo; the orchestrator session has it. Before T9, fetch the artboards into the git-ignored folder `design-handoff/`.
 3. Optional: overrule any default listed at the bottom of `SPEC.md`.
 
@@ -48,5 +48,5 @@ T5: codes. Build it in the design (board "6 Code entry", `design-handoff/CodeEnt
 | T5 | Codes: private decks, play codes, hidden code entry, hashed storage, rate limit | Stories P10, O2 to O4, O6; a test proves a private deck is not returned without its code | Not started |
 | T6 | Editor: edit codes, add, change and delete cards, create decks | Stories A1 to A4, O1 | Not started |
 | T7 | History import: Wikidata query script, AI curation to about 1000 Norwegian cards, load into the database | Story O5; a sample of 50 cards checked against Wikidata by the reviewer | Not started |
-| T8 | Backend deploy | The live site plays against the hosted backend from a phone | Blocked on ADR 0007 |
+| T8 | Backend deploy to Cloudflare Workers + D1 (ADR 0007) | The live site plays against the hosted backend from a phone | Waits on Lars's Cloudflare account and yes |
 | T9 | Design check after T6: compare every screen with the handoff at phone size and 1280, light and dark, and fix what differs | Reviewer finds no differences that matter; gate passes | Not started |

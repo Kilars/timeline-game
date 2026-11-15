@@ -1,6 +1,18 @@
 # 0007: Backend host
 
-Status: **Open.** Lars deferred this on 2026-11-14 and asked for pros and cons.
+Status: Accepted (Lars, 2026-11-15): **option A, Cloudflare Workers + D1**, on the `workers.dev` address.
+
+## Decision
+
+- The API runs as a Cloudflare Worker over D1. The `Database` interface gets a D1 implementation; the schema is applied with wrangler's D1 migrations from `api/migrations/`.
+- The code pepper is a Worker secret (`wrangler secret put`), never in the repo.
+- GitHub Actions deploys the Worker with a Cloudflare API token kept as a repository secret, and builds Pages with `VITE_API_URL` set to the Worker's address.
+- The owner's code script reaches the hosted database through wrangler.
+- On day one, the `workers.dev` address is tested from the family's phones, because Telenor Nettvern has blocked Cloudflare domains before. If it is blocked, a domain of Lars's own is pointed at the Worker.
+- Backups: D1's point-in-time restore, plus a regular export to a private place. Check D1's current free limits before the first deploy.
+- The first deploy still needs Lars's explicit yes, and Lars creates the Cloudflare account and the API token.
+
+Lars deferred this on 2026-11-14 and asked for pros and cons; the options as weighed then follow.
 
 ## What the host must do
 
