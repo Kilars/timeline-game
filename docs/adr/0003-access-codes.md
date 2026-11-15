@@ -14,6 +14,8 @@ Family, friends and Lars's own decks must not unlock each other. Some decks shou
 - A code has a role: `play` or `edit`. Edit includes play. The same mechanism serves players and admins.
 - Lars holds a master edit code for all decks.
 - Code entry sits behind a hidden gesture: tapping the title five times. A web app cannot detect the power button.
+- The taps give no feedback of any kind: no counter, no animation, no vibration. Only the fifth tap does something, and it opens a single text field. (Lars, 2026-11-15)
+- The field is built for pasting a long code, not typing one: no autocorrect, no capitalisation, no length limit. Lars keeps his codes ready to copy. (Lars, 2026-11-15)
 - The device remembers the codes it has been given.
 
 ## Rules for the implementation

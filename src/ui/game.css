@@ -1,0 +1,783 @@
+/*
+  The game screen: top bar, timeline, hand tray, and the card states.
+  Only variables from theme.css: no raw colours, font sizes, spacing or radii here.
+
+  A card is hand, spill (pending), last (locked) or tapt (missed or lost). Its `data-state` sets
+  face, border, shadow and tilt; the same word goes on its node on the line and on its pip.
+*/
+
+/* ---------- Layout: only the timeline scrolls ---------- */
+
+.tl-spill {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ---------- Top bar ---------- */
+
+.tl-topp {
+  flex: none;
+  display: flex;
+  align-items: center;
+  min-height: var(--tl-topp);
+  padding: 0 var(--tl-rom-5);
+}
+
+/* On a phone the name is there for screen readers only. */
+.tl-topp__merke {
+  position: absolute;
+  width: var(--tl-skjult);
+  height: var(--tl-skjult);
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.tl-topp__status {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tl-rom-3);
+}
+
+.tl-runde {
+  display: flex;
+  align-items: baseline;
+  gap: var(--tl-rom-2);
+}
+
+.tl-runde__tall {
+  font: var(--tl-type-tittel-l);
+  font-variant-numeric: tabular-nums;
+}
+
+.tl-framdrift {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--tl-rom-1h);
+}
+
+.tl-framdrift__tekst {
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-framdrift__tall {
+  font: var(--tl-type-arstall);
+  line-height: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+/* After a reveal the pips change when the card settles, not before the year shows. */
+.tl-framdrift:is([data-fase='deciding'], [data-fase='miss']) .tl-pip {
+  transition-delay: var(--tl-etter-vend);
+}
+
+/* ---------- Timeline ---------- */
+
+.tl-linje {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tl-linje__rull {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* A short line rests on the tray; `margin-top: auto` keeps the top reachable when it grows. */
+.tl-linje__liste {
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  padding: var(--tl-rom-2) var(--tl-rom-4) var(--tl-rom-2h);
+}
+
+.tl-rad {
+  display: flex;
+  align-items: stretch;
+}
+
+/* The line itself, drawn row by row. */
+.tl-skinne {
+  position: relative;
+  flex: none;
+  display: flex;
+  align-items: center;
+  width: var(--tl-skinne);
+}
+
+.tl-skinne::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--tl-skinne-inn);
+  width: var(--tl-strek-2);
+  background: var(--tl-linje);
+}
+
+.tl-rad:first-child .tl-skinne::before {
+  top: 50%;
+}
+
+.tl-rad:last-child .tl-skinne::before {
+  bottom: 50%;
+}
+
+.tl-node {
+  position: relative;
+  width: var(--tl-node);
+  height: var(--tl-node);
+  border-radius: 50%;
+  background: var(--tl-last);
+  border: 0 solid var(--tl-blekk);
+  box-shadow: 0 0 0 var(--tl-strek-3) var(--tl-bord);
+  transition:
+    background-color var(--tl-tid-sett) var(--tl-ease-ut),
+    border-color var(--tl-tid-sett) var(--tl-ease-ut);
+  transition-delay: var(--tl-tid-rett);
+}
+
+.tl-node[data-state='spill'] {
+  background: var(--tl-spill);
+  border-width: var(--tl-strek-2);
+}
+
+.tl-node[data-state='tapt'] {
+  background: var(--tl-bord);
+  border-width: var(--tl-strek-2);
+  border-color: var(--tl-tapt);
+  box-shadow: none;
+  transition-delay: var(--tl-etter-vend);
+}
+
+.tl-node[data-state='valgt'] {
+  background: var(--tl-bord);
+  border-width: var(--tl-strek-3);
+  box-shadow: none;
+}
+
+/* More of the line above or below what is on screen. */
+.tl-linje__uttoning {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--tl-uttoning);
+  background: linear-gradient(var(--tl-bord), transparent);
+  pointer-events: none;
+}
+
+.tl-linje__uttoning[data-ende='bunn'] {
+  top: auto;
+  bottom: 0;
+  background: linear-gradient(transparent, var(--tl-bord));
+}
+
+.tl-chip {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  height: var(--tl-trykk);
+  padding: 0;
+  border: 0;
+  border-radius: var(--tl-radius-pille);
+  background: none;
+  transform: translateX(-50%);
+  cursor: pointer;
+}
+
+.tl-chip[data-ende='topp'] {
+  top: 0;
+}
+
+.tl-chip[data-ende='bunn'] {
+  bottom: 0;
+}
+
+.tl-chip__pille {
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-1h);
+  height: var(--tl-chip);
+  padding: 0 var(--tl-rom-3h);
+  border-radius: var(--tl-radius-pille);
+  background: var(--tl-blekk);
+  color: var(--tl-bord);
+  font: var(--tl-type-liten);
+  white-space: nowrap;
+}
+
+/* ---------- Gap: idle and chosen ---------- */
+
+.tl-apning {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: var(--tl-trykk);
+  padding: 0;
+  border: 0;
+  border-radius: var(--tl-radius-slot);
+  background: none;
+  cursor: pointer;
+  transition: height var(--tl-tid-kort) var(--tl-ease-ut);
+}
+
+.tl-apning__spor {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--tl-rom-2);
+  width: 100%;
+  height: var(--tl-apning);
+  border: var(--tl-strek) dashed var(--tl-kant);
+  border-radius: var(--tl-radius-slot);
+  color: var(--tl-blekk-2);
+  transition:
+    height var(--tl-tid-kort) var(--tl-ease-ut),
+    background-color var(--tl-tid-kort) var(--tl-ease-ut);
+}
+
+.tl-apning[aria-pressed='true'] {
+  height: calc(var(--tl-apning-valgt) + var(--tl-rom-3));
+  border-radius: var(--tl-radius-kort);
+}
+
+.tl-apning[aria-pressed='true'] .tl-apning__spor {
+  height: var(--tl-apning-valgt);
+  border: var(--tl-strek-valgt) solid var(--tl-blekk);
+  border-radius: var(--tl-radius-kort);
+  background: var(--tl-spill-flate);
+  color: var(--tl-blekk);
+  font: var(--tl-type-tekst-fet);
+}
+
+/* ---------- Card: locked is the base ---------- */
+
+.tl-kort {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-3);
+  min-height: var(--tl-kort-min);
+  padding: var(--tl-rom-2h) var(--tl-rom-3h);
+  border: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-kort);
+  background: var(--tl-papir);
+  box-shadow: var(--tl-skygge-flat);
+  color: var(--tl-blekk);
+  /* Locking in: the card straightens, drops and turns to paper. Cards lock oldest first. */
+  transition:
+    transform var(--tl-tid-rett) var(--tl-ease-ut),
+    box-shadow var(--tl-tid-rett) var(--tl-ease-ut),
+    background-color var(--tl-tid-rett) var(--tl-ease-ut),
+    border-color var(--tl-tid-rett) var(--tl-ease-ut),
+    color var(--tl-tid-rett) var(--tl-ease-ut);
+  transition-delay: calc(var(--tl-nr, 0) * var(--tl-steg));
+}
+
+/* With no gaps between them, the cards keep a little air. */
+.tl-linje__liste:not([data-fase='placing']) :is(.tl-kort, .tl-hjem) {
+  margin-block: var(--tl-rom-1h);
+}
+
+/* Pending: lifted, tilted, dashed. Never by colour alone. */
+.tl-kort[data-state='spill'] {
+  border: var(--tl-strek-2) dashed var(--tl-spill);
+  background: var(--tl-spill-flate);
+  box-shadow: var(--tl-skygge-loftet);
+  transform: rotate(var(--tl-vipp-a));
+}
+
+.tl-kort[data-state='spill'][data-vipp='b'] {
+  transform: rotate(var(--tl-vipp-b));
+}
+
+/* Lost with a miss: grey and off the line, never red. It slips when the outcome shows. */
+.tl-kort[data-state='tapt'] {
+  border: var(--tl-strek) dashed var(--tl-kant);
+  background: var(--tl-tapt-flate);
+  box-shadow: none;
+  color: var(--tl-tapt);
+  transform: rotate(var(--tl-vipp-tapt)) translateX(var(--tl-skyv-tapt));
+  transition-duration: var(--tl-tid-sett);
+  transition-delay: var(--tl-etter-vend);
+}
+
+/* The card that was placed wrongly, shown where the player put it. */
+.tl-kort[data-state='tapt'][data-bom] {
+  border-style: solid;
+  border-color: var(--tl-linje);
+  color: var(--tl-blekk);
+  transform: rotate(var(--tl-vipp-bom)) translateX(var(--tl-skyv-bom));
+}
+
+/* In hand: title only. */
+.tl-kort[data-state='hand'] {
+  flex: none;
+  gap: var(--tl-rom-3h);
+  min-height: var(--tl-hand-min);
+  padding: var(--tl-rom-3h) var(--tl-rom-4h);
+  border: 0;
+  border-radius: var(--tl-radius-knapp);
+  box-shadow: var(--tl-skygge-hand);
+  transform: rotate(var(--tl-vipp-hand));
+}
+
+.tl-kort__sporsmal {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tl-sporsmal);
+  height: var(--tl-sporsmal);
+  border: var(--tl-strek-2) dashed var(--tl-kant);
+  border-radius: 50%;
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-arstall);
+}
+
+.tl-kort__ar {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  width: var(--tl-arstall-bredde);
+  font: var(--tl-type-arstall);
+  font-variant-numeric: tabular-nums;
+}
+
+.tl-kort__era {
+  font: var(--tl-type-liten);
+}
+
+.tl-kort__midt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Titles wrap and are never cut. */
+.tl-kort__tittel {
+  font: var(--tl-type-kort);
+  overflow-wrap: break-word;
+  text-decoration: line-through transparent;
+  transition: text-decoration-color var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend);
+}
+
+.tl-kort[data-state='hand'] .tl-kort__tittel {
+  flex: 1;
+  min-width: 0;
+  font: var(--tl-type-hand);
+}
+
+.tl-kort[data-state='tapt']:not([data-bom]) .tl-kort__tittel {
+  text-decoration-color: currentColor;
+}
+
+.tl-kort__under {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten-n);
+}
+
+.tl-kort[data-state='spill'] .tl-kort__under {
+  color: var(--tl-spill-tekst);
+  font: var(--tl-type-liten);
+}
+
+.tl-kort[data-state='tapt'] .tl-kort__under {
+  color: var(--tl-tapt);
+  font: var(--tl-type-liten);
+}
+
+.tl-kort__las {
+  color: var(--tl-last);
+}
+
+.tl-kort[data-state='spill'] .tl-kort__las {
+  color: var(--tl-spill-tekst);
+}
+
+.tl-kort[data-state='tapt'] .tl-kort__las {
+  color: var(--tl-tapt);
+}
+
+/* The card placed last, opened up with its date and reveal line. */
+.tl-kort--apen {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--tl-rom-1h);
+  padding: var(--tl-rom-3h) var(--tl-rom-4);
+}
+
+.tl-kort__hode {
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-2h);
+}
+
+.tl-kort__ar--stor {
+  flex-direction: row;
+  width: auto;
+  font: var(--tl-type-avslort);
+  font-variant-numeric: tabular-nums;
+}
+
+.tl-kort__dato {
+  flex: 1;
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-merke {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-1);
+  height: var(--tl-merke);
+  padding: 0 var(--tl-rom-3) 0 var(--tl-rom-2);
+  border-radius: var(--tl-radius-pille);
+  background: var(--tl-blekk);
+  color: var(--tl-bord);
+  font: var(--tl-type-liten);
+}
+
+.tl-kort--apen .tl-kort__tittel {
+  font: var(--tl-type-knapp);
+}
+
+.tl-kort__avsloring {
+  font: var(--tl-type-tekst-s);
+}
+
+.tl-kort__under--ikon {
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-1h);
+}
+
+/* Where a missed card belongs. */
+.tl-hjem {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-3);
+  min-height: var(--tl-felt);
+  padding: 0 var(--tl-rom-3h);
+  border: var(--tl-strek-2) dashed var(--tl-blekk);
+  border-radius: var(--tl-radius-kort);
+  font: var(--tl-type-tekst-fet);
+}
+
+/* ---------- Hand tray ---------- */
+
+.tl-brett {
+  position: relative;
+  flex: none;
+  padding: var(--tl-rom-3h) var(--tl-rom-5) max(var(--tl-rom-6), env(safe-area-inset-bottom));
+  border-top: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-brett) var(--tl-radius-brett) 0 0;
+  background: var(--tl-flate);
+  box-shadow: var(--tl-skygge-brett);
+}
+
+.tl-brett__innhold {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-3h);
+}
+
+.tl-brett__hode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--tl-rom-3);
+}
+
+.tl-brett__plass {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-tekst);
+}
+
+.tl-brett__plass[data-valgt] {
+  color: var(--tl-blekk);
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-brett__hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--tl-knapp);
+  padding: 0 var(--tl-rom-2);
+  border: var(--tl-strek) dashed var(--tl-kant);
+  border-radius: var(--tl-radius-knapp);
+  color: var(--tl-blekk-2);
+  text-align: center;
+}
+
+.tl-brett__tekst {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-1);
+}
+
+.tl-brett__tittel {
+  font: var(--tl-type-tittel-m);
+}
+
+.tl-brett__merknad {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-tekst-s);
+}
+
+.tl-brett__tap {
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-valg {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--tl-rom-3);
+}
+
+.tl-valg[data-ett] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Shown beside the timeline on a wide screen, where the tray has room for it. */
+.tl-brett__spill {
+  display: none;
+  align-items: center;
+  gap: var(--tl-rom-2);
+  color: var(--tl-spill-tekst);
+  font: var(--tl-type-tekst-fet);
+}
+
+/* ---------- Motion ----------
+   Reveal, 420ms: the card flies from the hand to its gap (0 to 140, a FLIP in dom.ts), the year
+   turns over and the face warms or cools (140 to 300), then the card settles and the outcome
+   shows (300 to 420). Until the year shows, a miss looks the same as a correct placement.
+   Lock in: straighten (0 to 160), then the lock pops (160 to 280), oldest card first.
+   Next turn after a miss: the lost cards slide out and fade over 240ms. */
+
+@keyframes tl-inn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes tl-opp {
+  from {
+    opacity: 0;
+    transform: translateY(var(--tl-rom-1));
+  }
+}
+
+@keyframes tl-vend-ut {
+  to {
+    opacity: 0;
+    transform: rotateX(90deg);
+  }
+}
+
+@keyframes tl-vend {
+  from {
+    opacity: 0;
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes tl-varm {
+  from {
+    border-color: var(--tl-linje);
+    background-color: var(--tl-papir);
+  }
+}
+
+@keyframes tl-sett {
+  from {
+    box-shadow: var(--tl-skygge-flat);
+    transform: none;
+  }
+}
+
+@keyframes tl-sprett {
+  from {
+    transform: scale(var(--tl-sprett-fra));
+  }
+}
+
+/* The card that was just placed, correct or not. */
+.tl-kort[data-nylig] {
+  animation:
+    tl-varm var(--tl-tid-vend) var(--tl-ease-ut) var(--tl-etter-fly) backwards,
+    tl-sett var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend) backwards;
+}
+
+/* The year slot turns over on its horizontal axis, from the question mark to the year. */
+.tl-kort__ar[data-avslort] {
+  position: relative;
+}
+
+.tl-kort__ar[data-avslort]::before {
+  content: '?';
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: tl-vend-ut calc(var(--tl-tid-vend) / 2) ease-in var(--tl-etter-fly) both;
+}
+
+.tl-kort__ar[data-avslort] > * {
+  animation: tl-vend calc(var(--tl-tid-vend) / 2) var(--tl-ease-ut)
+    calc(var(--tl-etter-fly) + var(--tl-tid-vend) / 2) backwards;
+}
+
+/* What the reveal adds comes up as the card settles. */
+.tl-kort[data-nylig] :is(.tl-kort__dato, .tl-merke, .tl-kort__avsloring, .tl-kort__under),
+.tl-hjem {
+  animation: tl-opp var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend) backwards;
+}
+
+.tl-kort[data-state='tapt'] :is(.tl-kort__under, .tl-kort__las) {
+  animation: tl-inn var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend) backwards;
+}
+
+/* The dot of the card just placed, and of the marker, shows with the outcome. */
+.tl-node[data-sen] {
+  animation: tl-inn var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend) backwards;
+}
+
+/* The tray crossfades to what comes next; after a reveal, not before the year has shown. */
+.tl-brett__innhold {
+  animation: tl-inn var(--tl-tid-kort) var(--tl-ease-ut) backwards;
+}
+
+.tl-brett__innhold[data-etter-vending] {
+  animation-duration: var(--tl-tid-sett);
+  animation-delay: var(--tl-etter-vend);
+}
+
+/* The lock closes and pops as the card locks. */
+.tl-kort[data-nylast] .tl-kort__las {
+  animation: tl-sprett var(--tl-tid-sett) var(--tl-ease-sprett)
+    calc(var(--tl-tid-rett) + var(--tl-nr, 0) * var(--tl-steg)) backwards;
+}
+
+/* Next turn after a miss: the lost cards and the marker leave to the right. */
+.tl-linje__liste[data-ut] :is(.tl-kort[data-state='tapt'], .tl-hjem) {
+  opacity: 0;
+  translate: var(--tl-skyv-ut) 0;
+  transition:
+    opacity var(--tl-tid) var(--tl-ease-ut),
+    translate var(--tl-tid) var(--tl-ease-ut);
+}
+
+/* Reduced motion: nothing travels, flips or pops. Each state crossfades over 140ms.
+   The tilt stays, because it is a state, not an animation. */
+@media (prefers-reduced-motion: reduce) {
+  .tl-spill *,
+  .tl-spill *::before {
+    animation: none !important;
+    transition-delay: 0s !important;
+    transition-duration: var(--tl-tid-kort) !important;
+    transition-property:
+      opacity, background-color, border-color, color, box-shadow, text-decoration-color !important;
+  }
+
+  .tl-spill .tl-kort__ar[data-avslort]::before {
+    content: none;
+  }
+
+  .tl-spill :is(.tl-kort[data-nylig], .tl-hjem, .tl-brett__innhold, .tl-kort__under) {
+    animation: tl-inn var(--tl-tid-kort) var(--tl-ease-ut) backwards !important;
+  }
+}
+
+/* ---------- Wide screen: the timeline in its own column, the hand panel beside it ---------- */
+
+@media (min-width: 900px) {
+  .tl-spill {
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(var(--tl-bredde-panel-min), var(--tl-bredde-panel));
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: var(--tl-rom-9);
+    max-width: var(--tl-bredde-side);
+    margin: 0 auto;
+    padding: 0 var(--tl-rom-7) var(--tl-rom-7);
+  }
+
+  .tl-topp {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    gap: var(--tl-rom-6);
+    min-height: var(--tl-topp-bred);
+    padding: var(--tl-rom-2) 0;
+  }
+
+  .tl-topp__merke {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    font: var(--tl-type-tittel-l);
+    letter-spacing: var(--tl-sperring-tett);
+  }
+
+  .tl-topp__status {
+    flex: none;
+    gap: var(--tl-rom-7);
+  }
+
+  .tl-linje__liste {
+    padding: var(--tl-rom-2) var(--tl-rom-4) var(--tl-rom-2) var(--tl-rom-1);
+  }
+
+  .tl-brett {
+    align-self: center;
+    padding: var(--tl-rom-6);
+    border: var(--tl-strek) solid var(--tl-linje);
+    border-radius: var(--tl-radius-brett);
+    box-shadow: var(--tl-skygge-loftet);
+  }
+
+  .tl-brett__innhold {
+    gap: var(--tl-rom-4h);
+  }
+
+  .tl-kort[data-state='hand'] {
+    gap: var(--tl-rom-4);
+    min-height: var(--tl-hand-min-bred);
+    padding: var(--tl-rom-5) var(--tl-rom-5h);
+  }
+
+  .tl-kort[data-state='hand'] .tl-kort__tittel {
+    font: var(--tl-type-hand-l);
+  }
+
+  .tl-brett__spill {
+    display: flex;
+  }
+}

@@ -1,0 +1,103 @@
+/*
+  The result screen, after a win or when the cards ran out.
+  Only variables from theme.css: no raw colours, font sizes, spacing or radii here.
+*/
+
+.tl-resultat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-6);
+  max-width: var(--tl-bredde-smal);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--tl-rom-9) var(--tl-rom-5) var(--tl-rom-6);
+}
+
+.tl-resultat__hode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--tl-rom-3);
+  text-align: center;
+}
+
+.tl-resultat__tittel {
+  font: var(--tl-type-tittel-l);
+}
+
+/* The score, on a card of its own. */
+.tl-resultat__kort {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--tl-rom-1);
+  margin: var(--tl-rom-3) var(--tl-rom-4) 0;
+  padding: var(--tl-rom-6) var(--tl-rom-5);
+  border: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-brett);
+  background: var(--tl-papir);
+  box-shadow: var(--tl-skygge-loftet);
+  transform: rotate(var(--tl-vipp-hand));
+}
+
+.tl-resultat__tall {
+  font: var(--tl-type-tall);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tl-sperring-tall);
+}
+
+.tl-resultat__enhet {
+  font: var(--tl-type-tittel-l);
+}
+
+.tl-resultat__liste {
+  display: flex;
+  flex-direction: column;
+  margin: var(--tl-rom-2) 0 0;
+  border: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-knapp);
+  background: var(--tl-flate);
+}
+
+.tl-resultat__rad {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tl-rom-3);
+  min-height: var(--tl-rad);
+  padding: 0 var(--tl-rom-4);
+}
+
+.tl-resultat__rad + .tl-resultat__rad {
+  border-top: var(--tl-strek) solid var(--tl-linje);
+}
+
+.tl-resultat__rad dt {
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-resultat__rad dd {
+  font: var(--tl-type-tittel-m);
+}
+
+.tl-resultat__merknad {
+  color: var(--tl-blekk-2);
+  text-align: center;
+}
+
+.tl-resultat__liste + .tl-resultat__merknad {
+  margin-top: calc(-1 * var(--tl-rom-2));
+}
+
+.tl-resultat__merknad[data-rekord] {
+  color: var(--tl-blekk);
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-resultat__knapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-3);
+  margin-top: auto;
+}

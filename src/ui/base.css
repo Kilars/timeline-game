@@ -1,0 +1,174 @@
+/*
+  What every screen shares: the table, text defaults, focus, buttons, labels, icons and pips.
+  Only variables from theme.css: no raw colours, font sizes, spacing or radii here.
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  /* The table: bord with two crossed stripes as a tablecloth check. */
+  background-color: var(--tl-bord);
+  background-image:
+    linear-gradient(var(--tl-rute) 50%, transparent 50%),
+    linear-gradient(90deg, var(--tl-rute) 50%, transparent 50%);
+  background-size: var(--tl-rute-storrelse) var(--tl-rute-storrelse);
+  color: var(--tl-blekk);
+  font: var(--tl-type-tekst);
+}
+
+h1,
+h2,
+p,
+ol,
+dl,
+dd {
+  margin: 0;
+}
+
+ol {
+  padding: 0;
+  list-style: none;
+}
+
+button {
+  color: inherit;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+:focus-visible {
+  outline: var(--tl-strek-3) solid var(--tl-fokus);
+  outline-offset: var(--tl-fokus-avstand);
+}
+
+/* Small capital label: "Runde", "På hånden", "Du brukte". */
+.tl-etikett {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten);
+  letter-spacing: var(--tl-sperring);
+  text-transform: uppercase;
+}
+
+/* Icons */
+.tl-ikon {
+  flex: none;
+  width: var(--tl-ikon);
+  height: var(--tl-ikon);
+  stroke-width: var(--tl-ikon-strek);
+}
+
+.tl-ikon[data-size='s'] {
+  width: var(--tl-ikon-s);
+  height: var(--tl-ikon-s);
+}
+
+.tl-ikon[data-size='l'] {
+  width: var(--tl-ikon-l);
+  height: var(--tl-ikon-l);
+}
+
+/* Action button */
+.tl-knapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--tl-knapp);
+  padding: 0 var(--tl-rom-2);
+  border: 0;
+  border-radius: var(--tl-radius-knapp);
+  font: var(--tl-type-knapp);
+  text-align: center;
+  cursor: pointer;
+  transition: transform var(--tl-tid-kort) var(--tl-ease-ut);
+}
+
+.tl-knapp:active {
+  transform: scale(var(--tl-trykk-skala));
+}
+
+.tl-knapp[data-farge='last'] {
+  background: var(--tl-last);
+  color: var(--tl-pa-last);
+}
+
+.tl-knapp[data-farge='spill'] {
+  background: var(--tl-spill);
+  color: var(--tl-pa-spill);
+}
+
+/* One of two choices of equal weight: a title and a line under it. */
+.tl-knapp--valg {
+  flex-direction: column;
+  min-height: var(--tl-knapp-valg);
+  padding: var(--tl-rom-2) var(--tl-rom-1);
+}
+
+.tl-knapp__tittel {
+  font: var(--tl-type-valg);
+}
+
+.tl-knapp__under {
+  font: var(--tl-type-liten-n);
+}
+
+.tl-knapp--stor {
+  min-height: var(--tl-knapp-stor);
+  border-radius: var(--tl-radius-stor);
+  box-shadow: var(--tl-skygge-loftet);
+  font: var(--tl-type-tittel-m);
+}
+
+/* Progress pips: locked, pending this turn, still to win. */
+.tl-pipper {
+  display: flex;
+  gap: var(--tl-rom-1);
+  max-width: 100%;
+}
+
+.tl-pip {
+  flex: 0 1 auto;
+  width: var(--tl-pip-b);
+  min-width: 0;
+  height: var(--tl-pip-h);
+  border-radius: var(--tl-radius-pille);
+  box-shadow: inset 0 0 0 var(--tl-strek) var(--tl-kant);
+  transition:
+    background-color var(--tl-tid-sett) var(--tl-ease-ut),
+    box-shadow var(--tl-tid-sett) var(--tl-ease-ut);
+  /* A pip fills as its card's lock closes. */
+  transition-delay: var(--tl-tid-rett);
+}
+
+.tl-pip[data-state='last'] {
+  background-color: var(--tl-last);
+  box-shadow: inset 0 0 0 var(--tl-strek) var(--tl-last);
+}
+
+.tl-pip[data-state='spill'] {
+  background-color: var(--tl-spill);
+  box-shadow: inset 0 0 0 var(--tl-strek) var(--tl-blekk);
+}
+
+.tl-pipper[data-stor] .tl-pip {
+  width: var(--tl-pip-stor-b);
+  height: var(--tl-pip-stor-h);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-knapp,
+  .tl-pip {
+    transition: none;
+  }
+}

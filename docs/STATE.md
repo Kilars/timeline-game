@@ -12,12 +12,13 @@ Decided 2026-11-15: no filters in version 1; reveal happens on confirming a plac
 
 T1 is done: the rules live in `src/game/` (see its README), pure and seeded, 146 unit tests. The reviewer found no defects and played 2160 seeded games through it.
 
-Notes from the T1 review for coming tasks:
+T2 is done: the game screen is built in the design (src/ui/, tokens in src/theme.css) and plays the fixture deck (src/fixtures/). Opening the app starts a game at once; T3 puts the start screen in front of it. The reviewer found four defects, all fixed: the winning card now gets its reveal before "Se resultatet"; a miss names the cards it took; a chosen gap at the end of the line is kept clear of the "Nyere kort" chip; two fixture titles were corrected. Ideas from the review are in `IDEAS.md`. The copy says lost cards are "Ute av spillet", as the spec says; the design's "Tilbake i bunken" is wrong there.
 
-- T2: show dates at the judging precision, or a year-judged timeline can look out of order.
-- T2: do not offer "draw another" when both piles are empty.
-- T2 and T3: "play again" must pick a new seed, or the same game is replayed.
+Notes for coming tasks:
+
+- T3: "play again" must pick a new seed (T2 does this; keep it when settings come in).
 - T3: the target must be at least 2 and should not exceed the number of cards in play.
+- T5: code entry per ADR 0003 as updated 2026-11-15: no feedback on the taps, one text field made for pasting a long code.
 - T4: map database NULL month and day to absent before creating a game.
 
 ## Waiting on Lars
@@ -28,7 +29,7 @@ Notes from the T1 review for coming tasks:
 
 ## Next task
 
-T2 (with the builder), then T3. Both are built directly in the design, since the handoff arrived before any screen was written (it had not changed for seven hours when T2 started).
+T3, built directly in the design (start screen board). Fetch the remaining boards (start, code entry, editor, dark variants) into `design-handoff/` first.
 
 ## Backlog
 
@@ -36,7 +37,7 @@ T2 (with the builder), then T3. Both are built directly in the design, since the
 |---|---|---|---|
 | T0 | Repo and tooling: git repo, public GitHub repo, Vite + React + TypeScript scaffold, Vitest, Playwright, `npm run check`, `npm run play`, Pages deploy workflow | An empty page is live on Pages and the gate passes | Done 2026-11-15 |
 | T1 | Game rules as a pure module: turns, pending and locked cards, miss, lock in, win, judging with precision and ties, draw with deck mix and no repeats, seeded shuffle | Unit tests cover every rule in SPEC "Game rules" | Done 2026-11-15 |
-| T2 | Game screen on the fixture deck: vertical timeline, tap a gap, reveal, draw another or lock in, miss feedback, result screen with personal best; all colours, fonts and spacing in one theme file | `npm run play` completes a full game; stories P2 to P6, P11 | In progress |
+| T2 | Game screen on the fixture deck: vertical timeline, tap a gap, reveal, draw another or lock in, miss feedback, result screen with personal best; all colours, fonts and spacing in one theme file | `npm run play` completes a full game; stories P2 to P6, P11 | Done 2026-11-15 |
 | T3 | Start screen: deck ticks, mix slider, target, judging precision, remembered settings | Stories P1, P7, P8, P12 | Not started |
 | T4 | API and local database: schema, read endpoints for decks and cards, seed script, client reads from the API | The game runs locally against the API; fixture deck still used in tests | Not started |
 | T5 | Codes: private decks, play codes, hidden code entry, hashed storage, rate limit | Stories P10, O2 to O4, O6; a test proves a private deck is not returned without its code | Not started |
