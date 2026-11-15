@@ -20,6 +20,8 @@ T4 is done: a Hono API over SQLite in `api/` (Node's built-in `node:sqlite` loca
 
 T8 brought forward on 2026-11-15 with Lars's yes: the T4 API runs on Cloudflare Workers + D1 at https://tidslinje-api.kilars.workers.dev (D1 database `tidslinje`, seeded with the public history fixture deck, 44 cards). CI applies migrations, deploys the Worker, then builds the site against it. Still open for T8: a health route, and a regular backup export.
 
+T7 started on 2026-11-15 at Lars's request: `node api/history-import.ts --push` loaded 1000 history cards from Wikidata into the hosted "historie" deck (README, "History deck"). Titles and reveal lines are Wikidata's bokmål text as it is; the AI curation pass and the reviewer's 50-card check against Wikidata are still to do. Julian-calendar dates keep only the year. Books were left out because their query times out on the public service.
+
 Notes for coming tasks:
 
 - T5: `codes.hash` is a unique lookup hash, so short play codes need a server-side pepper: a Worker secret (`wrangler secret put`), never in the repo.

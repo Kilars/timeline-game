@@ -74,6 +74,16 @@ npx wrangler@4.156.0 d1 execute tidslinje --remote --file seed.sql
 npx wrangler@4.156.0 deploy                                     # the Worker
 ```
 
+## History deck
+
+`node api/history-import.ts` builds the history deck from Wikidata: dated events (battles,
+treaties, disasters and more), international organisations by founding date and crewed space
+flights by launch, with Norwegian bokmål labels as titles and descriptions as reveal lines. It
+keeps the 1000 best known (by number of Wikipedia articles), at most a quarter of one type, drops
+titles that give the date away, and writes `artifacts/history/cards.json` and `history.sql`.
+`--push` loads them into the hosted database, replacing every card in the "historie" deck;
+`--count <n>` picks another number. Logic and tests: `api/src/wikidata.ts`.
+
 ## Layout
 
 - `src/` is the client.
