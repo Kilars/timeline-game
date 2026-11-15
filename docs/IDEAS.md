@@ -21,3 +21,7 @@ Parked features and suggestions. Nothing here is built until Lars moves it to th
 | Let the flying card leave the timeline's clip | T2 review | Clipped during the 140 ms fly; barely visible |
 | e2e check that "Spill igjen" deals a new game | T2 review | Checked by hand and in unit tests; `?seed=` stays in the address, so a reload replays it |
 | Scope the DOM lib to `e2e/helpers.ts` | T2 review | `tsconfig.node.json` has it for `settle` |
+| Best score per target and judging precision | T3 review | Now a day-judged game shares its record with a year-judged one |
+| Dim the slider's end labels when it is disabled | T3 review | "Bare historie" on the left reads oddly next to "Bare personlige kort" |
+| Keep "Kort for å vinne" on one line at 360 wide | T3 review | Wraps to two lines |
+| Smoother band behind the sticky "Spill" | Orchestrator, T3 | On short phones the solid band cuts across the checked background |

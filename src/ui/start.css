@@ -1,0 +1,277 @@
+/*
+  The start screen: decks, mix, target, judging precision and "Spill".
+  Only variables from theme.css: no raw colours, font sizes, spacing or radii here.
+*/
+
+.tl-start {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-5);
+  max-width: var(--tl-bredde-smal);
+  min-height: 100vh;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--tl-rom-6h) var(--tl-rom-5) var(--tl-rom-6);
+}
+
+.tl-start__hode {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-1h);
+}
+
+.tl-start__merke {
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-3);
+}
+
+.tl-start__tittel {
+  font: var(--tl-type-merke);
+  letter-spacing: var(--tl-sperring-tett);
+}
+
+.tl-start__ingress,
+.tl-start__merknad {
+  color: var(--tl-blekk-2);
+}
+
+.tl-start__merknad {
+  font: var(--tl-type-liten-n);
+}
+
+/* The mark beside the name */
+.tl-logo {
+  flex: none;
+  width: var(--tl-logo-b);
+  height: var(--tl-logo-h);
+}
+
+.tl-logo__linje {
+  stroke: var(--tl-linje);
+}
+
+.tl-logo__last {
+  fill: var(--tl-last);
+}
+
+.tl-logo__spill {
+  fill: var(--tl-spill);
+  stroke: var(--tl-blekk);
+}
+
+.tl-logo__spillkort {
+  fill: var(--tl-spill-flate);
+  stroke: var(--tl-spill);
+}
+
+.tl-logo__lastkort {
+  fill: var(--tl-papir);
+  stroke: var(--tl-last);
+}
+
+/* One setting: a label over its control */
+.tl-start__del {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-2);
+}
+
+.tl-start__del--tett {
+  gap: var(--tl-rom-0h);
+}
+
+.tl-start__del--rad {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--tl-rom-3);
+}
+
+/* Decks */
+.tl-stokker {
+  display: flex;
+  flex-direction: column;
+  border: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-knapp);
+  background: var(--tl-papir);
+  box-shadow: var(--tl-skygge-flat);
+}
+
+.tl-stokk {
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-3h);
+  min-height: var(--tl-rad);
+  padding: 0 var(--tl-rom-4);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tl-stokk + .tl-stokk {
+  border-top: var(--tl-strek) solid var(--tl-linje);
+}
+
+.tl-stokk__kryss {
+  flex: none;
+  width: var(--tl-avkryss);
+  height: var(--tl-avkryss);
+  margin: 0;
+  accent-color: var(--tl-last);
+  cursor: pointer;
+}
+
+.tl-stokk__navn {
+  flex: 1;
+  min-width: 0;
+  font: var(--tl-type-knapp);
+  overflow-wrap: anywhere;
+}
+
+.tl-stokk__type {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten-n);
+}
+
+/* Mix */
+.tl-blanding__hode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0 var(--tl-rom-3);
+}
+
+.tl-blanding__verdi {
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-blanding {
+  width: 100%;
+  height: var(--tl-trykk);
+  margin: 0;
+  accent-color: var(--tl-last);
+  cursor: pointer;
+}
+
+.tl-blanding:disabled {
+  cursor: default;
+}
+
+.tl-blanding__ender {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--tl-rom-3);
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten-n);
+}
+
+/* Target: − number + */
+.tl-teller {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--tl-rom-1);
+  padding: var(--tl-rom-1);
+  border: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-knapp);
+  background: var(--tl-papir);
+}
+
+.tl-teller__knapp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tl-segment);
+  height: var(--tl-segment);
+  padding: 0;
+  border: 0;
+  border-radius: var(--tl-radius-indre);
+  background: var(--tl-flate);
+  color: var(--tl-blekk);
+  cursor: pointer;
+  transition: transform var(--tl-tid-kort) var(--tl-ease-ut);
+}
+
+.tl-teller__knapp:active:not(:disabled) {
+  transform: scale(var(--tl-trykk-skala));
+}
+
+.tl-teller__knapp:disabled {
+  color: var(--tl-kant);
+  cursor: default;
+}
+
+.tl-teller__tall {
+  min-width: var(--tl-teller-tall);
+  font: var(--tl-type-teller);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+/* Judging precision: three segments */
+.tl-presisjon {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--tl-rom-1);
+  padding: var(--tl-rom-1);
+  border: var(--tl-strek) solid var(--tl-linje);
+  border-radius: var(--tl-radius-knapp);
+  background: var(--tl-papir);
+}
+
+.tl-presisjon__knapp {
+  height: var(--tl-segment);
+  padding: 0;
+  border: 0;
+  border-radius: var(--tl-radius-indre);
+  background: transparent;
+  color: var(--tl-blekk);
+  font: var(--tl-type-valg);
+  cursor: pointer;
+  transition: background-color var(--tl-tid-kort) var(--tl-ease-ut);
+}
+
+.tl-presisjon__knapp[aria-pressed='true'] {
+  background: var(--tl-last);
+  color: var(--tl-pa-last);
+}
+
+/* "Spill" at the foot */
+/* Sticks to the foot of the screen on a short phone, so "Spill" is never below the fold. */
+.tl-start__spill {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--tl-rom-3);
+  margin-top: auto;
+  padding-block: var(--tl-rom-3);
+  background: var(--tl-bord);
+}
+
+.tl-start__spill .tl-start__merknad {
+  text-align: center;
+}
+
+.tl-start__knapp {
+  font: var(--tl-type-spill);
+  letter-spacing: var(--tl-sperring-knapp);
+}
+
+/* Two classes, so it wins over `.tl-knapp[data-farge]` in base.css, which loads later. */
+.tl-knapp.tl-start__knapp:disabled {
+  background: var(--tl-tapt-flate);
+  color: var(--tl-tapt);
+  box-shadow: none;
+  cursor: default;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-teller__knapp,
+  .tl-presisjon__knapp {
+    transition: none;
+  }
+}

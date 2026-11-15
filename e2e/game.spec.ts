@@ -13,6 +13,7 @@ import {
   placeCorrectly,
   placeWrongly,
   seeResult,
+  startGame,
   timeline,
   wrongGapOnScreen,
   type Outcome,
@@ -40,9 +41,10 @@ async function playToTheEnd(page: Page, push: () => boolean): Promise<Outcome> {
 
 test.beforeEach(async ({ page }) => {
   await page.goto('./?seed=1')
+  await startGame(page)
 })
 
-test('opening the app starts a game at phone size, in Norwegian', async ({ page }) => {
+test('"Spill" with the default settings starts a game at phone size, in Norwegian', async ({ page }) => {
   expect(page.viewportSize()).toEqual({ width: 390, height: 844 })
   await expect(page.locator('html')).toHaveAttribute('lang', 'nb')
   await expect(page.getByRole('heading', { level: 1, name: 'Tidslinje' })).toBeAttached()
@@ -57,6 +59,7 @@ test('opening the app starts a game at phone size, in Norwegian', async ({ page 
 test('the same seed gives the same game', async ({ page }) => {
   const first = await cardInHand(page)
   await page.reload()
+  await startGame(page)
   expect(await cardInHand(page)).toEqual(first)
 })
 
@@ -208,6 +211,7 @@ test('the best score survives a reload', async ({ page }) => {
   await expect(page.locator('.tl-resultat__merknad')).toHaveText('Ny rekord!')
 
   await page.reload()
+  await startGame(page)
   expect(await playToTheEnd(page, () => false)).toBe('won')
   await seeResult(page)
   await expect(page.locator('.tl-resultat__tall')).toHaveText('9')
@@ -225,6 +229,7 @@ test('the game works when storage is blocked', async ({ page }) => {
     })
   })
   await page.reload()
+  await startGame(page)
   expect(await playToTheEnd(page, () => true)).toBe('won')
   await seeResult(page)
   await expect(page.locator('.tl-resultat__tall')).toHaveText('1')

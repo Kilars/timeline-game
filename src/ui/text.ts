@@ -47,3 +47,19 @@ export function resultNote(result: ScoreResult, turns: number): string {
   if (behind === 0) return 'Like bra som rekorden din.'
   return behind === 1 ? 'Én runde unna rekorden din.' : `${behind} runder unna rekorden din.`
 }
+
+/** A space that keeps "40" and "%" on one line. */
+const NO_BREAK = '\u00a0'
+
+/** What the mix slider is set to, for the ticked kinds of deck: "40 % personlige kort". */
+export function mixText(kind: 'history' | 'personal' | 'both' | 'none', percent: number): string {
+  if (kind === 'history') return 'Bare historie'
+  if (kind === 'personal') return 'Bare personlige kort'
+  return `${percent}${NO_BREAK}% personlige kort`
+}
+
+/** What a tie means at the judging precision. */
+export function precisionNote(precision: 'year' | 'month' | 'day'): string {
+  const unit = { year: 'år', month: 'måned', day: 'dag' }[precision]
+  return `Kort fra samme ${unit} kan ligge i hvilken som helst rekkefølge.`
+}

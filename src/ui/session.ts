@@ -5,6 +5,7 @@
 import {
   createGame,
   drawAnother,
+  type GameOptions,
   lockIn,
   nextTurn,
   placeCard,
@@ -23,8 +24,8 @@ export interface Session {
   justLocked: readonly string[]
 }
 
-export function startSession(cards: readonly Card[], seed: number): Session {
-  return { game: createGame(cards, { seed }), selectedGap: null, lastPlacedId: null, justLocked: [] }
+export function startSession(cards: readonly Card[], options: GameOptions): Session {
+  return { game: createGame(cards, options), selectedGap: null, lastPlacedId: null, justLocked: [] }
 }
 
 /** Marks a gap. Tapping another gap moves the mark. Nothing is placed or revealed. */

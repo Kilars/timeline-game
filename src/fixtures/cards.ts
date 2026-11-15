@@ -1,8 +1,9 @@
-// The bundled fixture deck: public history and an obviously fictional family.
-// It lets the game, the tests and `npm run play` run with no backend.
+// The bundled fixture decks: public history and an obviously fictional family.
+// They let the game, the tests and `npm run play` run with no backend.
 // Real personal cards never go in this file or anywhere else in the repo.
 
 import type { Card } from '../game/index.ts'
+import type { Deck } from '../ui/setup.ts'
 
 type Row = [id: string, title: string, reveal: string, year: number, month?: number, day?: number]
 
@@ -76,7 +77,24 @@ function toCard(pool: Card['pool'], [id, title, reveal, year, month, day]: Row):
   return card
 }
 
-export const fixtureCards: Card[] = [
-  ...history.map((row) => toCard('history', row)),
-  ...personal.map((row) => toCard('personal', row)),
+export const fixtureDecks: Deck[] = [
+  {
+    id: 'historie',
+    name: 'Historie',
+    kind: 'history',
+    visibility: 'public',
+    cards: history.map((row) => toCard('history', row)),
+  },
+  {
+    // In the real app a family deck is private and only listed for a device holding its code (T5).
+    // This one is fictional and bundled, so it is listed for everyone.
+    id: 'familien-testesen',
+    name: 'Familien Testesen',
+    kind: 'personal',
+    visibility: 'private',
+    cards: personal.map((row) => toCard('personal', row)),
+  },
 ]
+
+/** Every fixture card, from every deck. */
+export const fixtureCards: Card[] = fixtureDecks.flatMap((deck) => deck.cards)

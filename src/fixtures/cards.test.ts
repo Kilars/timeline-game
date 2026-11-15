@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createGame } from '../game/index.ts'
-import { fixtureCards } from './cards.ts'
+import { fixtureCards, fixtureDecks } from './cards.ts'
 
 describe('the fixture deck', () => {
   const history = fixtureCards.filter((card) => card.pool === 'history')
@@ -41,5 +41,16 @@ describe('the fixture deck', () => {
 
   it('uses only the obviously fictional Testesen family for personal cards', () => {
     for (const card of personal) expect(card.title, card.id).toContain('Testesen')
+  })
+
+  it('comes as a public history deck and a fictional personal deck', () => {
+    expect(fixtureDecks.map((deck) => [deck.id, deck.kind, deck.visibility])).toEqual([
+      ['historie', 'history', 'public'],
+      ['familien-testesen', 'personal', 'private'],
+    ])
+    for (const deck of fixtureDecks) {
+      for (const card of deck.cards) expect(card.pool, card.id).toBe(deck.kind)
+    }
+    expect(fixtureCards).toEqual(fixtureDecks.flatMap((deck) => deck.cards))
   })
 })

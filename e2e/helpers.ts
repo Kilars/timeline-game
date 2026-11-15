@@ -6,14 +6,25 @@
 
 import type { Locator, Page } from '@playwright/test'
 import { fixtureCards } from '../src/fixtures/cards.ts'
-import { DEFAULT_CONFIG, correctGapsFor, type Card } from '../src/game/index.ts'
+import { DEFAULT_CONFIG, correctGapsFor, type Card, type Precision } from '../src/game/index.ts'
 
 const cardsByTitle = new Map(fixtureCards.map((card) => [card.title, card]))
 
-function cardWithTitle(title: string): Card {
+export function cardWithTitle(title: string): Card {
   const card = cardsByTitle.get(title.trim())
   if (!card) throw new Error(`No fixture card has the title "${title}"`)
   return card
+}
+
+/** The "Spill" button on the start screen. */
+export function playButton(page: Page): Locator {
+  return page.getByRole('button', { name: 'Spill', exact: true })
+}
+
+/** On the start screen: taps "Spill" and waits for the first card in hand. */
+export async function startGame(page: Page): Promise<void> {
+  await playButton(page).click()
+  await handCard(page).waitFor()
 }
 
 /** The timeline, oldest at the top. */
@@ -47,18 +58,27 @@ export async function cardInHand(page: Page): Promise<Card> {
   return cardWithTitle(await handCard(page).locator('.tl-kort__tittel').innerText())
 }
 
-/** The gaps where the card in hand may go, by the rules, for the timeline on screen. */
-export async function correctGapsOnScreen(page: Page): Promise<number[]> {
+/**
+ * The gaps where the card in hand may go, by the rules, for the timeline on screen. The precision is
+ * the one the game was started with; the screen does not say it.
+ */
+export async function correctGapsOnScreen(
+  page: Page,
+  precision: Precision = DEFAULT_CONFIG.precision,
+): Promise<number[]> {
   await handCard(page).waitFor()
-  return correctGapsFor(await cardsOnLine(page), await cardInHand(page), DEFAULT_CONFIG.precision)
+  return correctGapsFor(await cardsOnLine(page), await cardInHand(page), precision)
 }
 
 /**
  * A gap where the card in hand does not belong, as close to the right place as possible so that
  * both end up on screen. Null when every gap is right (the card ties with every card on the line).
  */
-export async function wrongGapOnScreen(page: Page): Promise<number | null> {
-  const correct = await correctGapsOnScreen(page)
+export async function wrongGapOnScreen(
+  page: Page,
+  precision: Precision = DEFAULT_CONFIG.precision,
+): Promise<number | null> {
+  const correct = await correctGapsOnScreen(page, precision)
   const gaps = await timeline(page).locator('button[data-gap]').count()
   const last = Math.max(...correct)
   const first = Math.min(...correct)
@@ -106,9 +126,12 @@ export async function place(page: Page, gap: number): Promise<Outcome> {
 }
 
 /** Places the card in hand in a correct gap. Returns the card and what happened. */
-export async function placeCorrectly(page: Page): Promise<{ card: Card; outcome: Outcome }> {
+export async function placeCorrectly(
+  page: Page,
+  precision: Precision = DEFAULT_CONFIG.precision,
+): Promise<{ card: Card; outcome: Outcome }> {
   const card = await cardInHand(page)
-  const [gap] = await correctGapsOnScreen(page)
+  const [gap] = await correctGapsOnScreen(page, precision)
   if (gap === undefined) throw new Error(`"${card.title}" has no correct gap`)
   return { card, outcome: await place(page, gap) }
 }
@@ -116,9 +139,12 @@ export async function placeCorrectly(page: Page): Promise<{ card: Card; outcome:
 /**
  * Places the card in hand in a wrong gap. Returns null, and places nothing, when every gap is right.
  */
-export async function placeWrongly(page: Page): Promise<{ card: Card; outcome: Outcome } | null> {
+export async function placeWrongly(
+  page: Page,
+  precision: Precision = DEFAULT_CONFIG.precision,
+): Promise<{ card: Card; outcome: Outcome } | null> {
   const card = await cardInHand(page)
-  const gap = await wrongGapOnScreen(page)
+  const gap = await wrongGapOnScreen(page, precision)
   if (gap === null) return null
   return { card, outcome: await place(page, gap) }
 }

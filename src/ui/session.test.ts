@@ -40,10 +40,10 @@ function sketch(rows: Row[]): string[] {
 
 describe('session', () => {
   it('starts a game on the fixture deck with nothing chosen', () => {
-    const s = startSession(fixtureCards, 1)
+    const s = startSession(fixtureCards, { seed: 1 })
     expect(s.game.phase).toBe('placing')
     expect(s.selectedGap).toBeNull()
-    expect(startSession(fixtureCards, 1)).toEqual(s)
+    expect(startSession(fixtureCards, { seed: 1 })).toEqual(s)
   })
 
   it('moves the chosen gap without placing anything', () => {

@@ -21,8 +21,10 @@ import {
   lockIn,
   nextTurn,
   place,
+  playButton,
   seeResult,
   settle,
+  startGame,
   wrongGapOnScreen,
 } from '../e2e/helpers.ts'
 import { browser as browserOptions, phone } from '../e2e/phone.ts'
@@ -35,9 +37,10 @@ const port = 4174
 type Shot = (name: string) => Promise<void>
 
 /**
- * Plays one full game to a win, the way a player who knows every date and likes a risk would,
- * with a screenshot of every step:
+ * Starts on the start screen with the default settings and plays one full game to a win, the way a
+ * player who knows every date and likes a risk would, with a screenshot of every step:
  *
+ * - the start screen, then "Spill",
  * - the first turn takes two cards before locking in,
  * - the next turn takes one card and then misses on purpose, losing it,
  * - every turn after that takes two cards and locks in, until the target is reached.
@@ -53,6 +56,9 @@ async function play(page: Page, shot: Shot): Promise<void> {
   let lostToTheMiss = 0
   let won = false
 
+  await expect(playButton(page)).toBeVisible()
+  await shot('start')
+  await startGame(page)
   await expect(handCard(page)).toBeVisible()
   await expect(page.getByText('Runde 1', { exact: true })).toBeVisible()
   await shot('ny-runde')

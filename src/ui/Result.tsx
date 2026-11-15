@@ -8,11 +8,14 @@ interface ResultProps {
   game: GameState
   /** How the game compares with the best score. Null when the game ended without a win. */
   result: ScoreResult | null
+  /** A new game with the same settings. */
   onPlayAgain: () => void
+  /** Back to the start screen to change the settings. */
+  onToStart: () => void
 }
 
 /** The end of a game: the score and the best score after a win, a short message when the cards ran out. */
-export function Result({ game, result, onPlayAgain }: ResultProps) {
+export function Result({ game, result, onPlayAgain, onToStart }: ResultProps) {
   const { target } = game.config
   const turns = game.player.turnsUsed
   const placed = game.player.timeline.length
@@ -59,6 +62,9 @@ export function Result({ game, result, onPlayAgain }: ResultProps) {
       <div className="tl-resultat__knapper">
         <button type="button" className="tl-knapp tl-knapp--stor" data-farge="last" onClick={onPlayAgain}>
           Spill igjen
+        </button>
+        <button type="button" className="tl-knapp tl-knapp--andre" onClick={onToStart}>
+          Til start
         </button>
       </div>
     </main>

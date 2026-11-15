@@ -78,6 +78,11 @@ button {
   height: var(--tl-ikon-l);
 }
 
+.tl-ikon[data-size='xl'] {
+  width: var(--tl-ikon-xl);
+  height: var(--tl-ikon-xl);
+}
+
 /* Action button */
 .tl-knapp {
   display: flex;
@@ -128,6 +133,15 @@ button {
   border-radius: var(--tl-radius-stor);
   box-shadow: var(--tl-skygge-loftet);
   font: var(--tl-type-tittel-m);
+}
+
+/* A second button under a large one: "Til start". */
+.tl-knapp--andre {
+  min-height: var(--tl-knapp-andre);
+  border: var(--tl-strek-2) solid var(--tl-last);
+  background: transparent;
+  color: var(--tl-last);
+  font: var(--tl-type-valg);
 }
 
 /* Progress pips: locked, pending this turn, still to win. */

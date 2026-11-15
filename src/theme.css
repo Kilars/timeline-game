@@ -30,6 +30,9 @@
   --tl-type-tekst-s: 400 16px/22px var(--tl-font-tekst); /* reveal line, tray notes */
   --tl-type-tekst-fet: 700 17px/22px var(--tl-font-tekst);
   --tl-type-liten-n: 400 15px/20px var(--tl-font-tekst);
+  --tl-type-spill: 800 26px/32px var(--tl-font-tittel); /* "Spill" on the start screen */
+  --tl-type-teller: 800 28px/32px var(--tl-font-tittel); /* the target on the start screen, tabular */
+  --tl-sperring-knapp: 0.01em; /* "Spill" */
   --tl-sperring: 0.06em; /* small capital labels */
   --tl-sperring-tett: -0.02em;
   --tl-sperring-tall: -0.03em;
@@ -61,7 +64,8 @@
 
   --tl-rute-storrelse: 44px; /* one square of the tablecloth */
 
-  /* Spacing. The half steps are used inside cards and trays only. */
+  /* Spacing. The half steps are used inside cards, trays and the start screen only. */
+  --tl-rom-0h: 2px; /* between the mix label, slider and ends */
   --tl-rom-1: 4px;
   --tl-rom-1h: 6px;
   --tl-rom-2: 8px;
@@ -73,6 +77,7 @@
   --tl-rom-5: 20px;
   --tl-rom-5h: 22px;
   --tl-rom-6: 24px;
+  --tl-rom-6h: 28px; /* top of the start screen */
   --tl-rom-7: 32px;
   --tl-rom-8: 40px;
   --tl-rom-9: 56px;
@@ -83,7 +88,13 @@
   --tl-knapp: 60px; /* action button */
   --tl-felt: 52px; /* text field, "belongs here" marker */
   --tl-knapp-valg: 80px; /* the two choices after a correct placement */
-  --tl-knapp-stor: 68px; /* "Spill igjen" */
+  --tl-knapp-stor: 68px; /* "Spill", "Spill igjen" */
+  --tl-knapp-andre: 56px; /* a second button under a large one: "Til start" */
+  --tl-segment: 48px; /* a segment of the precision choice, the target's − and + */
+  --tl-teller-tall: 52px; /* width of the target between − and + */
+  --tl-avkryss: 26px; /* the tick box of a deck */
+  --tl-logo-b: 44px; /* the mark beside the name on the start screen */
+  --tl-logo-h: 48px;
   --tl-topp: 64px; /* top bar */
   --tl-topp-bred: 72px; /* top bar on a wide screen */
   --tl-hand-min: 76px; /* the card in hand */
@@ -101,6 +112,7 @@
   --tl-ikon-strek: 2.4; /* line weight of an icon, in its 24 unit grid */
   --tl-ikon-s: 16px;
   --tl-ikon-l: 20px;
+  --tl-ikon-xl: 22px; /* − and + of the target */
   --tl-pip-b: 16px; /* progress pip */
   --tl-pip-h: 8px;
   --tl-pip-stor-b: 22px; /* progress pip on the result screen */
