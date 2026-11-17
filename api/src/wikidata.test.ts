@@ -3,6 +3,7 @@ import {
   JULIAN,
   agreedDate,
   cardsFromRows,
+  curate,
   parseDate,
   pickCards,
   revealsDate,
@@ -149,6 +150,36 @@ describe('cardsFromRows', () => {
       ['wd-Q3', undefined],
       ['wd-Q4', undefined],
     ])
+  })
+})
+
+describe('curate', () => {
+  const card = (id: string, title: string, year = 1900) => ({ id, title, year, source: '', sitelinks: 1, type: 't' })
+
+  it('renames and drops by id', () => {
+    const cards = curate([card('a', 'A'), card('b', 'B'), card('c', 'C')], {
+      titles: { a: 'Ny A' },
+      drop: { b: 'dup' },
+    })
+    expect(cards.map((c) => c.title)).toEqual(['Ny A', 'C'])
+  })
+
+  it('leaves out shuttle flights named by code and births from 1960 on', () => {
+    const cards = curate(
+      [
+        card('wd-Q1-P619', 'STS-9 skytes opp', 1983),
+        card('wd-Q2-P569', 'Ny person blir født', 1960),
+        card('wd-Q3-P569', 'Eldre person blir født', 1959),
+        card('wd-Q2-P570', 'Ny person dør', 2020),
+      ],
+      { titles: {}, drop: {} },
+    )
+    expect(cards.map((c) => c.id)).toEqual(['wd-Q3-P569', 'wd-Q2-P570'])
+  })
+
+  it('keeps a shuttle flight whose title the curation changes', () => {
+    const cards = curate([card('x', 'STS-51-L skytes opp')], { titles: { x: 'Challenger-ulykken' }, drop: {} })
+    expect(cards.map((c) => c.title)).toEqual(['Challenger-ulykken'])
   })
 })
 

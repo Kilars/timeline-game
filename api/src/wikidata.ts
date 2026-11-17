@@ -145,6 +145,32 @@ export function cardsFromRows(rows: readonly Row[]): HistoryCard[] {
   return cards
 }
 
+/** Hand curation: clearer titles and cards to leave out, both by card id. */
+export interface Curation {
+  titles: Record<string, string>
+  drop: Record<string, string>
+}
+
+/**
+ * Births of people born this year or later are left out: the names are known, the birth years are
+ * not.
+ */
+export const BORN_FROM = 1960
+
+/**
+ * The cards with the curation applied, and without two kinds of card that play badly: space shuttle
+ * flights named by code ("STS-9 skytes opp"), and births from `BORN_FROM` on.
+ */
+export function curate(cards: readonly HistoryCard[], curation: Curation): HistoryCard[] {
+  return cards.flatMap((card) => {
+    if (curation.drop[card.id] !== undefined) return []
+    const title = curation.titles[card.id] ?? card.title
+    if (/^STS-/.test(title)) return []
+    if (card.id.endsWith('-P569') && card.year >= BORN_FROM) return []
+    return [{ ...card, title }]
+  })
+}
+
 /**
  * Cards without the end of a war that ended the year it began: the two cards would show the same
  * year, and the start says it all. Ends are the cards made from P582, starts from P580.

@@ -306,7 +306,7 @@ function cloudflareEnv(): NodeJS.ProcessEnv {
   }
 }
 
-const count = option('--count', 1000)
+const count = option('--count', 670)
 const perType = option('--per-type', Math.ceil(count * 0.15))
 
 const rows: Row[] = []
@@ -340,7 +340,7 @@ for (const { property, template, humans = false, minSitelinks } of POPULAR) {
   console.log(`  most read ${property}: ${found} rows`)
 }
 
-const candidates = withoutSameYearEnds(cardsFromRows(rows))
+const candidates = curate(withoutSameYearEnds(cardsFromRows(rows)), CURATION)
 const views = await articles([...new Set(candidates.flatMap((card) => (card.article ? [card.article] : [])))])
 for (const card of candidates) card.views = card.article ? (views.get(card.article)?.views ?? 0) : 0
 const cards = pickCards(candidates, count, perType)

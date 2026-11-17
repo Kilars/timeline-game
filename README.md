@@ -81,9 +81,12 @@ as titles and descriptions as reveal lines. Candidates are dated events (battles
 disasters and more), international organisations by founding date, crewed space flights by launch,
 and the births, deaths and events among the most read articles on Norwegian Wikipedia the last two
 years (people only when at least 50 Wikipedias cover them). Only items with a Norwegian article
-count, and the deck keeps the 1000 whose article is read most (the last 60 days), at most 15 % of
-one type. It drops titles that give the date away, and writes `artifacts/history/cards.json` and
-`history.sql`. A run takes 20–30 minutes, mostly waiting on Wikipedia and Wikidata.
+count. A hand curation in `api/src/history-curation.ts` gives clearer titles and leaves out
+duplicates, wrong or disputed dates and obscure cards; space shuttle flights named by code and
+births from 1960 on are left out too. The deck keeps the 670 whose article is read most (the last
+60 days), at most 15 % of one type. It drops titles that give the date away, and writes
+`artifacts/history/cards.json` and `history.sql`. A new run can bring in cards the curation has
+not seen; look over the end of the list before `--push`. A run takes 20–30 minutes, mostly waiting on Wikipedia and Wikidata.
 `--push` loads them into the hosted database, replacing every card in the "historie" deck;
 `--count <n>` picks another number. Logic and tests: `api/src/wikidata.ts`.
 
