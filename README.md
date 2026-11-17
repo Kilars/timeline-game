@@ -76,11 +76,14 @@ npx wrangler@4.156.0 deploy                                     # the Worker
 
 ## History deck
 
-`node api/history-import.ts` builds the history deck from Wikidata: dated events (battles,
-treaties, disasters and more), international organisations by founding date and crewed space
-flights by launch, with Norwegian bokmål labels as titles and descriptions as reveal lines. It
-keeps the 1000 best known (by number of Wikipedia articles), at most a quarter of one type, drops
-titles that give the date away, and writes `artifacts/history/cards.json` and `history.sql`.
+`node api/history-import.ts` builds the history deck from Wikidata, with Norwegian bokmål labels
+as titles and descriptions as reveal lines. Candidates are dated events (battles, treaties, wars,
+disasters and more), international organisations by founding date, crewed space flights by launch,
+and the births, deaths and events among the most read articles on Norwegian Wikipedia the last two
+years (people only when at least 50 Wikipedias cover them). Only items with a Norwegian article
+count, and the deck keeps the 1000 whose article is read most (the last 60 days), at most 15 % of
+one type. It drops titles that give the date away, and writes `artifacts/history/cards.json` and
+`history.sql`. A run takes 20–30 minutes, mostly waiting on Wikipedia and Wikidata.
 `--push` loads them into the hosted database, replacing every card in the "historie" deck;
 `--count <n>` picks another number. Logic and tests: `api/src/wikidata.ts`.
 

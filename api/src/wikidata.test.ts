@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { JULIAN, agreedDate, cardsFromRows, parseDate, pickCards, revealsDate, type Row } from './wikidata.ts'
+import {
+  JULIAN,
+  agreedDate,
+  cardsFromRows,
+  parseDate,
+  pickCards,
+  revealsDate,
+  withoutSameYearEnds,
+  type Row,
+} from './wikidata.ts'
 
 const GREGORIAN = 'http://www.wikidata.org/entity/Q1985727'
 
@@ -44,11 +53,18 @@ describe('parseDate', () => {
 
 describe('agreedDate', () => {
   it('keeps what the dates agree on', () => {
-    expect(agreedDate([{ year: -490, month: 9, day: 7 }, { year: -490, month: 9, day: 5 }])).toEqual({
-      year: -490,
-      month: 9,
-    })
-    expect(agreedDate([{ year: -490, month: 9 }, { year: -490, month: 8 }])).toEqual({ year: -490 })
+    expect(
+      agreedDate([
+        { year: -490, month: 9, day: 7 },
+        { year: -490, month: 9, day: 5 },
+      ]),
+    ).toEqual({ year: -490, month: 9 })
+    expect(
+      agreedDate([
+        { year: -490, month: 9 },
+        { year: -490, month: 8 },
+      ]),
+    ).toEqual({ year: -490 })
     expect(agreedDate([{ year: 1, month: 2, day: 3 }])).toEqual({ year: 1, month: 2, day: 3 })
   })
 
@@ -88,6 +104,11 @@ describe('cardsFromRows', () => {
     ])
   })
 
+  it('keeps the Norwegian article title so page views can be looked up', () => {
+    const [card] = cardsFromRows([row({ article: 'Slaget ved Waterloo' })])
+    expect(card?.article).toBe('Slaget ved Waterloo')
+  })
+
   it('merges several dates for an item and drops items whose dates disagree on the year', () => {
     const marathon = 'http://www.wikidata.org/entity/Q33356'
     const cards = cardsFromRows([
@@ -102,7 +123,13 @@ describe('cardsFromRows', () => {
   it('makes titles from a template, and a card per date property', () => {
     const ibsen = 'http://www.wikidata.org/entity/Q36661'
     const cards = cardsFromRows([
-      row({ item: ibsen, label: 'Henrik Ibsen', property: 'P569', template: '{} blir født', date: '1828-03-20T00:00:00Z' }),
+      row({
+        item: ibsen,
+        label: 'Henrik Ibsen',
+        property: 'P569',
+        template: '{} blir født',
+        date: '1828-03-20T00:00:00Z',
+      }),
       row({ item: ibsen, label: 'Henrik Ibsen', date: '1906-05-23T00:00:00Z' }),
     ])
     expect(cards.map((c) => [c.id, c.title, c.year])).toEqual([
@@ -125,6 +152,20 @@ describe('cardsFromRows', () => {
   })
 })
 
+describe('withoutSameYearEnds', () => {
+  const card = (id: string, year: number) => ({ id, title: id, year, source: '', sitelinks: 1, type: 'Q198' })
+
+  it('drops the end of a war that ended the year it began, and keeps the rest', () => {
+    const cards = [
+      card('wd-Q1-P580', 1967),
+      card('wd-Q1-P582', 1967),
+      card('wd-Q2-P580', 1939),
+      card('wd-Q2-P582', 1945),
+    ]
+    expect(withoutSameYearEnds(cards).map((c) => c.id)).toEqual(['wd-Q1-P580', 'wd-Q2-P580', 'wd-Q2-P582'])
+  })
+})
+
 describe('pickCards', () => {
   const card = (id: string, sitelinks: number, type = 'battle', title = id) => ({
     id,
@@ -138,6 +179,11 @@ describe('pickCards', () => {
   it('takes the best known first, up to the count', () => {
     const picked = pickCards([card('a', 1), card('b', 3), card('c', 2)], 2, 10)
     expect(picked.map((c) => c.id)).toEqual(['b', 'c'])
+  })
+
+  it('ranks by Norwegian page views before the number of Wikipedias', () => {
+    const picked = pickCards([card('a', 90), { ...card('b', 10), views: 500 }, { ...card('c', 50), views: 20 }], 3, 10)
+    expect(picked.map((c) => c.id)).toEqual(['b', 'c', 'a'])
   })
 
   it('caps each type and skips repeated titles, keeping the better known', () => {

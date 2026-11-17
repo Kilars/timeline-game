@@ -21,8 +21,10 @@ export interface Row {
   /** `wikibase:timePrecision`: 9 year, 10 month, 11 day. */
   precision: number
   calendar: string
-  /** How many Wikipedias have an article about it: how well known it is. */
+  /** How many Wikipedias have an article about it. */
   sitelinks: number
+  /** The title of its article on Norwegian (bokmål) Wikipedia, when it has one. */
+  article?: string
   /** The event type it was found under. */
   type: string
   /**
@@ -47,6 +49,9 @@ export interface HistoryCard extends HistoryDate {
   source: string
   sitelinks: number
   type: string
+  article?: string
+  /** Views of its Norwegian Wikipedia article lately: how well known it is here. */
+  views?: number
 }
 
 /** The longest title the editor allows. */
@@ -92,9 +97,7 @@ const MONTHS = 'januar|februar|mars|april|mai|juni|juli|august|september|oktober
  * and month ("4. mai-bevegelsen").
  */
 export function revealsDate(title: string): boolean {
-  return (
-    /\d{3,4}|århundre|f\.\s?Kr|e\.\s?Kr/i.test(title) || new RegExp(`\\d{1,2}\\.\\s*(${MONTHS})`, 'i').test(title)
-  )
+  return /\d{3,4}|århundre|f\.\s?Kr|e\.\s?Kr/i.test(title) || new RegExp(`\\d{1,2}\\.\\s*(${MONTHS})`, 'i').test(title)
 }
 
 function capitalise(text: string): string {
@@ -136,18 +139,31 @@ export function cardsFromRows(rows: readonly Row[]): HistoryCard[] {
       source: `https://www.wikidata.org/wiki/${qid}`,
       sitelinks: Math.max(...itemRows.map((r) => r.sitelinks)),
       type: row.type,
+      ...(row.article ? { article: row.article } : {}),
     })
   }
   return cards
 }
 
 /**
- * The best known cards, at most `count`, with at most `perType` of one event type so the deck is
- * not all battles. Titles that two cards share are kept once, for the better known card, so a player
- * never sees two cards that look the same.
+ * Cards without the end of a war that ended the year it began: the two cards would show the same
+ * year, and the start says it all. Ends are the cards made from P582, starts from P580.
+ */
+export function withoutSameYearEnds(cards: readonly HistoryCard[]): HistoryCard[] {
+  const starts = new Map(cards.filter((c) => c.id.endsWith('-P580')).map((c) => [c.id.slice(0, -5), c.year]))
+  return cards.filter((c) => !(c.id.endsWith('-P582') && starts.get(c.id.slice(0, -5)) === c.year))
+}
+
+/**
+ * The best known cards, at most `count`, with at most `perType` of one type so the deck is not all
+ * battles. Best known means most read on Norwegian Wikipedia, then covered by the most Wikipedias.
+ * Titles that two cards share are kept once, for the better known card, so a player never sees two
+ * cards that look the same.
  */
 export function pickCards(cards: readonly HistoryCard[], count: number, perType: number): HistoryCard[] {
-  const sorted = [...cards].sort((a, b) => b.sitelinks - a.sitelinks || a.id.localeCompare(b.id))
+  const sorted = [...cards].sort(
+    (a, b) => (b.views ?? 0) - (a.views ?? 0) || b.sitelinks - a.sitelinks || a.id.localeCompare(b.id),
+  )
   const titles = new Set<string>()
   const ids = new Set<string>()
   const perTypeCount = new Map<string, number>()
