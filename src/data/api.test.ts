@@ -109,9 +109,13 @@ describe('parseCards', () => {
     expect(card).toEqual({ id: 'a', title: 'A', year: -490, pool: 'history' })
   })
 
-  it('turns a null month, day or reveal into an absent one, not a null one', () => {
+  it('turns a null month, day, description or reveal into an absent one, not a null one', () => {
     const [card] = parseCards(
-      { cards: [{ id: 'a', title: 'A', reveal: null, year: 1972, month: null, day: null, source: null }] },
+      {
+        cards: [
+          { id: 'a', title: 'A', description: null, reveal: null, year: 1972, month: null, day: null, source: null },
+        ],
+      },
       'personal',
     )
     expect(card).toEqual({ id: 'a', title: 'A', year: 1972, pool: 'personal' })
@@ -134,6 +138,20 @@ describe('parseCards', () => {
     ])
   })
 
+  it('keeps a description', () => {
+    const [card] = parseCards(
+      { cards: [{ id: 'a', title: 'Soweto-opprøret', description: 'Skoleelever i Sør-Afrika protesterer.', year: 1976 }] },
+      'history',
+    )
+    expect(card).toEqual({
+      id: 'a',
+      title: 'Soweto-opprøret',
+      description: 'Skoleelever i Sør-Afrika protesterer.',
+      year: 1976,
+      pool: 'history',
+    })
+  })
+
   it('drops the source, which play does not need', () => {
     const [card] = parseCards({ cards: [{ id: 'a', title: 'A', year: 1, source: 'Q1' }] }, 'history')
     expect(card).not.toHaveProperty('source')
@@ -149,5 +167,6 @@ describe('parseCards', () => {
     expect(bad({ id: 'a', title: 'A', year: 1, month: 2, day: 0 })).toThrow(/day/)
     expect(bad({ id: 'a', title: 'A', year: 1, day: 5 })).toThrow(/no month/)
     expect(bad({ id: 'a', title: 'A', year: 1, reveal: 5 })).toThrow(/reveal/)
+    expect(bad({ id: 'a', title: 'A', year: 1, description: ['x'] })).toThrow(/description/)
   })
 })

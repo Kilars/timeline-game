@@ -4,6 +4,10 @@ import {
   agreedDate,
   cardsFromRows,
   curate,
+  milestoneCards,
+  readDate,
+  withDescriptions,
+  withMilestones,
   parseDate,
   pickCards,
   revealsDate,
@@ -164,22 +168,111 @@ describe('curate', () => {
     expect(cards.map((c) => c.title)).toEqual(['Ny A', 'C'])
   })
 
-  it('leaves out shuttle flights named by code and births from 1960 on', () => {
-    const cards = curate(
-      [
-        card('wd-Q1-P619', 'STS-9 skytes opp', 1983),
-        card('wd-Q2-P569', 'Ny person blir født', 1960),
-        card('wd-Q3-P569', 'Eldre person blir født', 1959),
-        card('wd-Q2-P570', 'Ny person dør', 2020),
-      ],
-      { titles: {}, drop: {} },
-    )
-    expect(cards.map((c) => c.id)).toEqual(['wd-Q3-P569', 'wd-Q2-P570'])
+  it('leaves out shuttle flights named by code', () => {
+    const cards = curate([card('wd-Q1-P619', 'STS-9 skytes opp', 1983), card('wd-Q2', 'Annet')], {
+      titles: {},
+      drop: {},
+    })
+    expect(cards.map((c) => c.id)).toEqual(['wd-Q2'])
+  })
+
+  it('replaces a wrong date as a whole, precision included', () => {
+    const wrong = { ...card('a', 'A', 1919), month: 3, day: 2 }
+    const [fixed] = curate([wrong, card('b', 'B', 1500)], { titles: {}, drop: {}, dates: { a: { year: 1920 } } })
+    expect(fixed).toEqual({ id: 'a', title: 'A', year: 1920, source: '', sitelinks: 1, type: 't' })
+    const [, other] = curate([wrong, card('b', 'B', 1500)], {
+      titles: {},
+      drop: {},
+      dates: { a: { year: 1920, month: 1, day: 10 } },
+    })
+    expect(other?.year).toBe(1500)
   })
 
   it('keeps a shuttle flight whose title the curation changes', () => {
     const cards = curate([card('x', 'STS-51-L skytes opp')], { titles: { x: 'Challenger-ulykken' }, drop: {} })
     expect(cards.map((c) => c.title)).toEqual(['Challenger-ulykken'])
+  })
+})
+
+describe('withDescriptions', () => {
+  const card = (id: string, reveal?: string) => ({
+    id,
+    title: id,
+    year: 1900,
+    source: '',
+    sitelinks: 1,
+    type: 't',
+    ...(reveal ? { reveal } : {}),
+  })
+
+  it('sets descriptions by id, drops the reveal line, and reports the cards without one', () => {
+    const { described, undescribed } = withDescriptions([card('a', 'Kort tekst'), card('b'), card('c')], {
+      a: 'Lengre tekst.',
+      c: 'Om c.',
+    })
+    expect(described).toEqual([
+      { id: 'a', title: 'a', year: 1900, source: '', sitelinks: 1, type: 't', description: 'Lengre tekst.' },
+      { id: 'c', title: 'c', year: 1900, source: '', sitelinks: 1, type: 't', description: 'Om c.' },
+    ])
+    expect(undescribed.map((c) => c.id)).toEqual(['b'])
+  })
+
+  it('keeps a description the card already has', () => {
+    const { described } = withDescriptions([{ ...card('a'), description: 'Egen.' }], { a: 'Annen.' })
+    expect(described[0]?.description).toBe('Egen.')
+  })
+})
+
+describe('readDate', () => {
+  it('reads a year, a month or a day, and years before 1', () => {
+    expect(readDate('1969-07-20')).toEqual({ year: 1969, month: 7, day: 20 })
+    expect(readDate('1937-05')).toEqual({ year: 1937, month: 5 })
+    expect(readDate('79')).toEqual({ year: 79 })
+    expect(readDate('-44-03-15')).toEqual({ year: -44, month: 3, day: 15 })
+  })
+
+  it('refuses anything else, and year 0', () => {
+    expect(() => readDate('1969-7-20x')).toThrow()
+    expect(() => readDate('ca. 1500')).toThrow()
+    expect(() => readDate('0')).toThrow()
+  })
+})
+
+describe('milestoneCards', () => {
+  const milestone = { type: 'verk', title: 'T', description: 'D.', date: '1890' }
+
+  it('makes a card with a Wikidata source and the article', () => {
+    expect(milestoneCards([{ ...milestone, qid: 'Q1', property: 'P577', article: 'Sult' }])).toEqual([
+      {
+        id: 'wd-Q1-P577',
+        title: 'T',
+        description: 'D.',
+        year: 1890,
+        source: 'https://www.wikidata.org/wiki/Q1',
+        sitelinks: 0,
+        type: 'verk',
+        article: 'Sult',
+      },
+    ])
+  })
+
+  it('numbers the second and later cards made from the same item', () => {
+    const cards = milestoneCards([
+      { ...milestone, qid: 'Q585' },
+      { ...milestone, qid: 'Q585' },
+      { ...milestone, qid: 'Q585', property: 'P571' },
+      { ...milestone, qid: 'Q585' },
+    ])
+    expect(cards.map((c) => c.id)).toEqual(['wd-Q585', 'wd-Q585-2', 'wd-Q585-P571', 'wd-Q585-3'])
+  })
+})
+
+describe('withMilestones', () => {
+  const card = (id: string, title: string) => ({ id, title, year: 1900, source: '', sitelinks: 1, type: 't' })
+
+  it('adds the hand-written cards, which win over a Wikidata card with the same id', () => {
+    const cards = withMilestones([card('a', 'Fra Wikidata'), card('b', 'B')], [card('a', 'For hånd'), card('c', 'C')])
+    expect(cards.map((c) => c.title)).toEqual(['B', 'For hånd', 'C'])
   })
 })
 

@@ -76,19 +76,26 @@ npx wrangler@4.156.0 deploy                                     # the Worker
 
 ## History deck
 
-`node api/history-import.ts` builds the history deck from Wikidata, with Norwegian bokmål labels
-as titles and descriptions as reveal lines. Candidates are dated events (battles, treaties, wars,
-disasters and more), international organisations by founding date, crewed space flights by launch,
-and the births, deaths and events among the most read articles on Norwegian Wikipedia the last two
-years (people only when at least 50 Wikipedias cover them). Only items with a Norwegian article
-count. A hand curation in `api/src/history-curation.ts` gives clearer titles and leaves out
-duplicates, wrong or disputed dates and obscure cards; space shuttle flights named by code and
-births from 1960 on are left out too. The deck keeps the 670 whose article is read most (the last
-60 days), at most 15 % of one type. It drops titles that give the date away, and writes
-`artifacts/history/cards.json` and `history.sql`. A new run can bring in cards the curation has
-not seen; look over the end of the list before `--push`. A run takes 20–30 minutes, mostly waiting on Wikipedia and Wikidata.
-`--push` loads them into the hosted database, replacing every card in the "historie" deck;
-`--count <n>` picks another number. Logic and tests: `api/src/wikidata.ts`.
+`node api/history-import.ts` builds the history deck. It has two kinds of card:
+
+- **From Wikidata:** dated events (battles, treaties, wars, disasters and more), international
+  organisations by founding date, crewed space flights by launch, and the events among the most
+  read articles on Norwegian Wikipedia the last two years. Only items with a Norwegian article
+  count. A hand curation in `api/src/history-curation.ts` gives clearer titles, fixes dates
+  Wikidata has wrong, and leaves out duplicates, disputed dates and obscure cards. Each card needs
+  a description in `api/src/history-descriptions.ts`; one without is left out and listed in
+  `artifacts/history/undescribed.json`.
+- **Hand-written:** inventions, discoveries, works, achievements and events, and the few deaths
+  that are events in themselves, in `api/src/history-milestones.ts`, each date checked against
+  Wikidata and the Wikipedia intro.
+
+Births and deaths are not fetched any more. The deck keeps up to 1000 cards, ranked by how often
+their Norwegian article is read (the last 60 days), at most 15 % of one type. It writes
+`artifacts/history/cards.json`, `undescribed.json` and `history.sql`. A run takes 20–30 minutes,
+mostly waiting on Wikipedia and Wikidata. `--push` loads them into the hosted database, replacing
+every card in the "historie" deck; `--count <n>` picks another number. Logic and tests:
+`api/src/wikidata.ts`; `api/src/history-content.test.ts` checks that no title or description gives
+the date away.
 
 ## Layout
 

@@ -36,8 +36,5 @@ Parked features and suggestions. Nothing here is built until Lars moves it to th
 | README: running the API for a phone on the LAN | T4 review | `dev:api` points at 127.0.0.1 and uses POSIX env syntax |
 | History: drop space shuttle cards named by code ("STS-9 skytes opp", "STS-51-L" is Challenger) | Play run 2026-11-17 | Keep the famous launches; the AI pass could retitle the rest |
 | History: flag cards whose Wikidata date is not the one people know | Play run 2026-11-17 | "Den amerikanske revolusjon" is 1763; most would say 1776. For the AI pass |
-| History: fewer births of living people | Play run 2026-11-17 | Known names, unknown birth years (Mourinho, Thiel, Skarsgård) |
 | A decade judging precision, as an easy level | Play run 2026-11-17 | Year precision makes 1933 and 1934 different gaps |
-| History: inventions as cards (telefonen, penicillinen, internett) | Lars, 2026-11-17 | Wikidata P575, time of discovery or invention |
-| History: more context on the card face, not only after the reveal | Lars, 2026-11-17 | A short line under the title, without the year |
-| History: fewer "blir født" / "dør" cards, they feel samey | Lars, 2026-11-17 | Rather what the person is known for: when Pippi Langstrømpe came out, not when Astrid Lindgren died. Works by date of publication (P577), achievements |
+| A smaller description on the hand card at short heights | Claude, 2026-11-18 | At 360×640 the longest description (164 characters) and a three-line title make the tray about 60 % of the screen; still playable |

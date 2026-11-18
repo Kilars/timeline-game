@@ -1,4 +1,7 @@
 import { describe, expect, it } from 'vitest'
+// A test only: the fixture follows the same rule as the history import.
+// eslint-disable-next-line no-restricted-imports
+import { revealsDate } from '../../api/src/wikidata.ts'
 import { createGame } from '../game/index.ts'
 import { fixtureCards, fixtureDecks } from './cards.ts'
 
@@ -29,6 +32,15 @@ describe('the fixture deck', () => {
       expect(card.reveal, card.id).toBeTruthy()
       expect(card.reveal, card.id).not.toContain('\n')
     }
+  })
+
+  it('gives every history card a description that keeps the date hidden, and some personal cards none', () => {
+    for (const card of history) {
+      expect(card.description, card.id).toBeTruthy()
+      expect(revealsDate(card.description ?? ''), card.description).toBe(false)
+    }
+    expect(personal.some((card) => card.description === undefined)).toBe(true)
+    expect(personal.some((card) => card.description !== undefined)).toBe(true)
   })
 
   it('has cards before year 1 and at least two pairs that share a year', () => {

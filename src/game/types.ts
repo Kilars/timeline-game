@@ -8,6 +8,8 @@ export interface Card {
   id: string
   /** Shown while the card is being placed. */
   title: string
+  /** Shown with the title while the card is placed, and kept after. Never gives the date away. */
+  description?: string
   /** Shown with the date after the card is placed. */
   reveal?: string
   /** Signed integer. Negative years are before year 1. */

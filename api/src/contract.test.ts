@@ -33,7 +33,7 @@ describe('the client reading the API', () => {
   it('gives cards with no month or day key where the database has NULL', async () => {
     const [deck] = await decksFromApi()
     const marathon = deck?.cards.find((card) => card.id === 'h-marathon')
-    expect(marathon && Object.keys(marathon).sort()).toEqual(['id', 'pool', 'reveal', 'title', 'year'])
+    expect(marathon && Object.keys(marathon).sort()).toEqual(['description', 'id', 'pool', 'reveal', 'title', 'year'])
   })
 
   it('gives the same seeded game every time', async () => {

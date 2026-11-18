@@ -109,7 +109,10 @@ export function Tray({ session, leaving, hand, onConfirm, onDraw, onLock, onNext
           <span className="tl-kort__sporsmal" aria-hidden="true">
             ?
           </span>
-          <p className="tl-kort__tittel">{game.drawn.title}</p>
+          <div className="tl-kort__midt">
+            <p className="tl-kort__tittel">{game.drawn.title}</p>
+            {game.drawn.description && <p className="tl-kort__beskrivelse">{game.drawn.description}</p>}
+          </div>
         </div>
         {selectedGap === null ? (
           <p className="tl-brett__hint">Trykk på en åpning i tidslinjen</p>

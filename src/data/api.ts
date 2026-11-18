@@ -81,7 +81,7 @@ export function parseDeckList(json: unknown): Omit<Deck, 'cards'>[] {
 
 /**
  * The body of GET /decks/:id/cards, checked and made into cards for the rules, with the pool set
- * from the deck's kind. A month, day or reveal that is missing or null is left out of the card
+ * from the deck's kind. A month, day, description or reveal that is missing or null is left out of the card
  * (the rules read an absent month or day as "not known"). The source is not needed for play.
  */
 export function parseCards(json: unknown, pool: Pool): Card[] {
@@ -93,6 +93,10 @@ export function parseCards(json: unknown, pool: Pool): Card[] {
       throw new ApiError(`Not a card: ${JSON.stringify(value)}`)
     }
     const result: Card = { id: card.id, title: card.title, year: card.year as number, pool }
+    if (card.description !== undefined && card.description !== null) {
+      if (typeof card.description !== 'string') throw new ApiError(`Card ${card.id} has a bad description`)
+      result.description = card.description
+    }
     if (card.reveal !== undefined && card.reveal !== null) {
       if (typeof card.reveal !== 'string') throw new ApiError(`Card ${card.id} has a bad reveal line`)
       result.reveal = card.reveal

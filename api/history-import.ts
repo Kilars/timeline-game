@@ -1,10 +1,13 @@
-// The history deck from Wikidata (T7, story O5): fetches dated events with Norwegian bokmål text,
-// picks the best known, and writes them as SQL that replaces the cards of the "historie" deck.
+// The history deck (T7, story O5): fetches dated events with Norwegian bokmål text from Wikidata,
+// adds the hand-written cards, picks the best known, and writes them as SQL that replaces the cards
+// of the "historie" deck.
 //
-// Candidates come from two places: events of chosen types (battles, treaties, wars and so on), and
-// the most read articles on Norwegian Wikipedia the last two years that have a date (births, deaths,
-// events). Only items with an article on Norwegian Wikipedia are used, and they are ranked by how
-// often that article is read: well known here beats covered by many Wikipedias.
+// Candidates come from three places: events of chosen types (battles, treaties, wars and so on), the
+// most read articles on Norwegian Wikipedia the last two years that are events with a date, and the
+// hand-written cards in api/src/history-milestones.ts (inventions, works, achievements, and the few
+// deaths that are events in themselves). Only Wikidata items with an article on Norwegian Wikipedia
+// are fetched, and cards are ranked by how often that article is read: well known here beats covered by
+// many Wikipedias.
 //
 //   node api/history-import.ts                  fetch and write artifacts/history/ (git-ignored)
 //   node api/history-import.ts --push           ... and load it into the hosted database (D1)
@@ -13,8 +16,10 @@
 // --push needs CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID, or `token` and `account` in .env.
 // Loading replaces every card in the "historie" deck, edits made in the app included.
 //
-// Titles are Wikidata's bokmål labels and reveal lines its bokmål descriptions, as they are. An AI
-// pass that rewrites and checks them is still to come (ADR 0006).
+// Every card needs a description, shown on the card while it is placed. Wikidata cards get theirs
+// from api/src/history-descriptions.ts; one without is left out and listed in
+// artifacts/history/undescribed.json, to be written. Titles are Wikidata's bokmål labels unless
+// api/src/history-curation.ts gives a better one.
 
 import { spawnSync } from 'node:child_process'
 import { existsSync } from 'node:fs'
@@ -22,7 +27,19 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { seedDecks } from './src/seed.ts'
 import { sqlDump } from './src/sql-dump.ts'
-import { cardsFromRows, pickCards, type Row } from './src/wikidata.ts'
+import { CURATION } from './src/history-curation.ts'
+import { DESCRIPTIONS } from './src/history-descriptions.ts'
+import { MILESTONES } from './src/history-milestones.ts'
+import {
+  cardsFromRows,
+  curate,
+  milestoneCards,
+  pickCards,
+  withDescriptions,
+  withMilestones,
+  withoutSameYearEnds,
+  type Row,
+} from './src/wikidata.ts'
 
 const ENDPOINT = 'https://query.wikidata.org/sparql'
 // Wikimedia asks scripts to say who they are.
@@ -100,16 +117,8 @@ const SOURCES: Source[] = [
   { type: 'Q198', name: 'krig', property: 'P582', template: '{} tar slutt', minSitelinks: 15, subclasses: true },
 ]
 
-/**
- * Dates looked up for the most read articles, with how the title is made. People must be covered by
- * many Wikipedias: the most read lists are full of people who were in the news lately, whose birth
- * year nobody knows.
- */
-const POPULAR: { property: string; template?: string; humans?: boolean; minSitelinks: number }[] = [
-  { property: 'P569', template: '{} blir født', humans: true, minSitelinks: 50 },
-  { property: 'P570', template: '{} dør', humans: true, minSitelinks: 50 },
-  { property: 'P585', minSitelinks: 0 },
-]
+// Births and deaths are no longer looked up: they made the deck samey. The few that are events in
+// themselves are hand-written cards.
 
 /** How many months of most read lists to go through. */
 const POPULAR_MONTHS = 24
@@ -136,12 +145,11 @@ function query({ type, property = 'P585', minSitelinks, subclasses }: Source): s
 }`
 }
 
-function popularQuery(items: readonly string[], property: string, humans: boolean, minSitelinks: number): string {
+/** The events among some items: those with their own date (P585). */
+function popularQuery(items: readonly string[]): string {
   return `${SELECT}
   VALUES ?item { ${items.map((qid) => `wd:${qid}`).join(' ')} }
-  ${humans ? '?item wdt:P31 wd:Q5 .' : ''}
-  ${dated(property)}
-  FILTER(?links >= ${minSitelinks})
+  ${dated('P585')}
 }`
 }
 
@@ -306,7 +314,7 @@ function cloudflareEnv(): NodeJS.ProcessEnv {
   }
 }
 
-const count = option('--count', 670)
+const count = option('--count', 1000)
 const perType = option('--per-type', Math.ceil(count * 0.15))
 
 const rows: Row[] = []
@@ -321,33 +329,35 @@ for (const source of SOURCES) {
 const popular = await mostRead(POPULAR_MONTHS)
 const popularItems = [...new Set([...(await articles(popular)).values()].flatMap(({ qid }) => (qid ? [qid] : [])))]
 console.log(`  most read: ${popular.length} articles, ${popularItems.length} with a Wikidata item`)
-for (const { property, template, humans = false, minSitelinks } of POPULAR) {
-  let found = 0
-  for (let i = 0; i < popularItems.length; i += POPULAR_BATCH) {
-    const batch = await runQuery(
-      popularQuery(popularItems.slice(i, i + POPULAR_BATCH), property, humans, minSitelinks),
-      `most read ${property}`,
-      {
-        type: `most read ${property}`,
-        // An event's own date gives no template and keeps the plain item id.
-        ...(template ? { property, template } : {}),
-      },
-    )
-    rows.push(...batch)
-    found += batch.length
-    await sleep(1_000)
-  }
-  console.log(`  most read ${property}: ${found} rows`)
+let popularRows = 0
+for (let i = 0; i < popularItems.length; i += POPULAR_BATCH) {
+  // An event's own date gives no template and keeps the plain item id.
+  const batch = await runQuery(popularQuery(popularItems.slice(i, i + POPULAR_BATCH)), 'most read P585', {
+    type: 'most read P585',
+  })
+  rows.push(...batch)
+  popularRows += batch.length
+  await sleep(1_000)
 }
+console.log(`  most read P585: ${popularRows} rows`)
 
-const candidates = curate(withoutSameYearEnds(cardsFromRows(rows)), CURATION)
-const views = await articles([...new Set(candidates.flatMap((card) => (card.article ? [card.article] : [])))])
-for (const card of candidates) card.views = card.article ? (views.get(card.article)?.views ?? 0) : 0
+const fetched = curate(withoutSameYearEnds(cardsFromRows(rows)), CURATION)
+const { described, undescribed } = withDescriptions(fetched, DESCRIPTIONS)
+const candidates = withMilestones(described, milestoneCards(MILESTONES))
+const ranked = [...candidates, ...undescribed]
+const views = await articles([...new Set(ranked.flatMap((card) => (card.article ? [card.article] : [])))])
+for (const card of ranked) card.views = card.article ? (views.get(card.article)?.views ?? 0) : 0
 const cards = pickCards(candidates, count, perType)
-console.log(`${rows.length} rows, ${candidates.length} usable cards, ${cards.length} picked`)
+console.log(
+  `${rows.length} rows, ${candidates.length} usable cards (${MILESTONES.length} hand-written), ${cards.length} picked`,
+)
+console.log(`${undescribed.length} Wikidata cards left out for having no description`)
 
 await mkdir(OUT, { recursive: true })
 await writeFile(path.join(OUT, 'cards.json'), `${JSON.stringify(cards, null, 2)}\n`)
+// The best known first: the ones most worth writing a description for.
+undescribed.sort((a, b) => (b.views ?? 0) - (a.views ?? 0) || b.sitelinks - a.sitelinks)
+await writeFile(path.join(OUT, 'undescribed.json'), `${JSON.stringify(undescribed, null, 2)}\n`)
 const db = sqlDump()
 await seedDecks(db, [
   {
@@ -355,9 +365,10 @@ await seedDecks(db, [
     name: 'Historie',
     kind: 'history',
     visibility: 'public',
-    cards: cards.map(({ id, title, reveal, year, month, day, source }) => ({
+    cards: cards.map(({ id, title, description, reveal, year, month, day, source }) => ({
       id,
       title,
+      description,
       reveal,
       year,
       month,
@@ -368,7 +379,7 @@ await seedDecks(db, [
 ])
 const sqlFile = path.join(OUT, 'history.sql')
 await writeFile(sqlFile, db.text())
-console.log(`Wrote ${path.relative(process.cwd(), OUT)}/cards.json and history.sql`)
+console.log(`Wrote ${path.relative(process.cwd(), OUT)}/cards.json, undescribed.json and history.sql`)
 
 if (process.argv.includes('--push')) {
   const result = spawnSync('npx', ['-y', WRANGLER, 'd1', 'execute', 'tidslinje', '--remote', '--file', sqlFile], {

@@ -121,6 +121,7 @@ function CardItem({ row, precision }: { row: CardRow; precision: Precision }) {
             </span>
           </div>
           <h2 className="tl-kort__tittel">{card.title}</h2>
+          {card.description && <p className="tl-kort__beskrivelse">{card.description}</p>}
           {card.reveal && <p className="tl-kort__avsloring">{card.reveal}</p>}
           {state === 'last' ? (
             <p className="tl-kort__under tl-kort__under--ikon">

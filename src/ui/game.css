@@ -330,7 +330,7 @@
   transform: rotate(var(--tl-vipp-bom)) translateX(var(--tl-skyv-bom));
 }
 
-/* In hand: title only. */
+/* In hand: the title, and the description in full when the card has one. */
 .tl-kort[data-state='hand'] {
   flex: none;
   gap: var(--tl-rom-3h);
@@ -384,9 +384,18 @@
 }
 
 .tl-kort[data-state='hand'] .tl-kort__tittel {
-  flex: 1;
-  min-width: 0;
   font: var(--tl-type-hand);
+}
+
+.tl-kort[data-state='hand'] .tl-kort__midt {
+  gap: var(--tl-rom-1h);
+}
+
+/* What the card is about. Wraps and is never cut, however long. */
+.tl-kort__beskrivelse {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-tekst-s);
+  overflow-wrap: break-word;
 }
 
 .tl-kort[data-state='tapt']:not([data-bom]) .tl-kort__tittel {

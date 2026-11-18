@@ -45,6 +45,8 @@ export interface HistoryDate {
 export interface HistoryCard extends HistoryDate {
   id: string
   title: string
+  /** Shown on the card while it is placed. Never gives the date away. */
+  description?: string
   reveal?: string
   source: string
   sitelinks: number
@@ -145,30 +147,116 @@ export function cardsFromRows(rows: readonly Row[]): HistoryCard[] {
   return cards
 }
 
-/** Hand curation: clearer titles and cards to leave out, both by card id. */
+/** Hand curation, by card id: clearer titles, cards to leave out and dates that Wikidata has wrong. */
 export interface Curation {
   titles: Record<string, string>
   drop: Record<string, string>
+  dates?: Record<string, HistoryDate>
 }
 
 /**
- * Births of people born this year or later are left out: the names are known, the birth years are
- * not.
- */
-export const BORN_FROM = 1960
-
-/**
- * The cards with the curation applied, and without two kinds of card that play badly: space shuttle
- * flights named by code ("STS-9 skytes opp"), and births from `BORN_FROM` on.
+ * The cards with the curation applied, and without space shuttle flights named by code ("STS-9
+ * skytes opp"), which play badly.
  */
 export function curate(cards: readonly HistoryCard[], curation: Curation): HistoryCard[] {
   return cards.flatMap((card) => {
     if (curation.drop[card.id] !== undefined) return []
     const title = curation.titles[card.id] ?? card.title
     if (/^STS-/.test(title)) return []
-    if (card.id.endsWith('-P569') && card.year >= BORN_FROM) return []
-    return [{ ...card, title }]
+    const date = curation.dates?.[card.id]
+    if (!date) return [{ ...card, title }]
+    const dated: HistoryCard = { ...card, title, ...date }
+    if (date.month === undefined) delete dated.month
+    if (date.day === undefined) delete dated.day
+    return [dated]
   })
+}
+
+/**
+ * The cards that have a description, with it set, and the cards left out for having none. A card
+ * with a description loses its reveal line: Wikidata's short descriptions say less than ours.
+ */
+export function withDescriptions(
+  cards: readonly HistoryCard[],
+  descriptions: Readonly<Record<string, string>>,
+): { described: HistoryCard[]; undescribed: HistoryCard[] } {
+  const described: HistoryCard[] = []
+  const undescribed: HistoryCard[] = []
+  for (const card of cards) {
+    const description = card.description ?? descriptions[card.id]
+    if (!description) {
+      undescribed.push(card)
+      continue
+    }
+    const next: HistoryCard = { ...card, description }
+    delete next.reveal
+    described.push(next)
+  }
+  return { described, undescribed }
+}
+
+/**
+ * A card written by hand: an invention, a work, an achievement or an event, checked against
+ * Wikipedia and Wikidata.
+ */
+export interface Milestone {
+  /** The Wikidata item. */
+  qid: string
+  /** The date property that was checked and agrees with `date`, when there is one. */
+  property?: string
+  /** "1969-07-20", "1969-07", "1969" or "-753" (753 BCE, no year 0). */
+  date: string
+  type: string
+  title: string
+  description: string
+  /** The title of its article on Norwegian (bokmål) Wikipedia. */
+  article?: string
+}
+
+/** A date written as "1969-07-20", "1969-07", "1969" or "-753". */
+export function readDate(text: string): HistoryDate {
+  const match = /^(-?\d+)(?:-(\d\d?))?(?:-(\d\d?))?$/.exec(text)
+  if (!match) throw new Error(`Not a date: ${text}`)
+  const year = Number(match[1])
+  if (year === 0) throw new Error(`There is no year 0: ${text}`)
+  return {
+    year,
+    ...(match[2] ? { month: Number(match[2]) } : {}),
+    ...(match[3] ? { day: Number(match[3]) } : {}),
+  }
+}
+
+/**
+ * Hand-written cards as history cards. The id is `wd-QID-PROP` when a date property was checked,
+ * else `wd-QID`, with "-2", "-3" and so on when an item gives more than one card.
+ */
+export function milestoneCards(milestones: readonly Milestone[]): HistoryCard[] {
+  const used = new Set<string>()
+  return milestones.map((m) => {
+    const base = m.property ? `wd-${m.qid}-${m.property}` : `wd-${m.qid}`
+    let id = base
+    for (let n = 2; used.has(id); n++) id = `${base}-${n}`
+    used.add(id)
+    return {
+      id,
+      title: m.title,
+      description: m.description,
+      ...readDate(m.date),
+      source: `https://www.wikidata.org/wiki/${m.qid}`,
+      sitelinks: 0,
+      type: m.type,
+      ...(m.article ? { article: m.article } : {}),
+    }
+  })
+}
+
+/**
+ * The Wikidata cards and the hand-written ones together. A hand-written card wins over a Wikidata
+ * card with the same id.
+ */
+export function withMilestones(cards: readonly HistoryCard[], milestones: readonly HistoryCard[]): HistoryCard[] {
+  const ids = new Set(milestones.map((m) => m.id))
+  return [...cards.filter((card) => !ids.has(card.id)), ...milestones]
 }
 
 /**

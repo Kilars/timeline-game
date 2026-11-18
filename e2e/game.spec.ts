@@ -67,8 +67,9 @@ test('nothing is revealed before "Bekreft"', async ({ page }) => {
   const card = await cardInHand(page)
   const year = dateText(card, 'year')
 
-  // In hand: the title only.
-  await expect(handCard(page)).toHaveText(`?${card.title}`)
+  // In hand: the title and the description, in full, and no date.
+  const face = `?${card.title}${card.description ?? ''}`
+  await expect(handCard(page)).toHaveText(face)
   await expect(page.getByText(card.reveal ?? '')).toHaveCount(0)
   await expect(page.locator('.tl-brett')).not.toContainText(year)
   await expect(confirm(page)).toHaveCount(0)
@@ -78,7 +79,7 @@ test('nothing is revealed before "Bekreft"', async ({ page }) => {
   await chooseGap(page, gap ?? 0)
   await expect(gapButton(page, gap ?? 0)).toHaveAttribute('aria-pressed', 'true')
   await expect(confirm(page)).toBeVisible()
-  await expect(handCard(page)).toHaveText(`?${card.title}`)
+  await expect(handCard(page)).toHaveText(face)
   await expect(page.getByText(card.reveal ?? '')).toHaveCount(0)
   await expect(lineCards(page)).toHaveCount(1)
 
@@ -104,6 +105,7 @@ test('a correct placement shows the pending card and both choices', async ({ pag
   await expect(pending).toHaveCount(1)
   await expect(pending).toContainText(card.title)
   await expect(pending).toContainText(dateText(card, 'year'))
+  await expect(pending).toContainText(card.description ?? '')
   await expect(pending).toContainText(card.reveal ?? '')
   await expect(pending).toContainText('På spill')
   await expect(pending).toBeInViewport()

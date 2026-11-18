@@ -18,6 +18,8 @@ export interface DeckJson {
 export interface CardJson {
   id: string
   title: string
+  /** Shown with the title while placing, and kept after. Never gives the date away. */
+  description?: string
   reveal?: string
   year: number
   month?: number

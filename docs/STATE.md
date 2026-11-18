@@ -1,6 +1,6 @@
 # State
 
-Updated: 2026-11-15
+Updated: 2026-11-18
 
 ## Current state
 
@@ -21,6 +21,8 @@ T4 is done: a Hono API over SQLite in `api/` (Node's built-in `node:sqlite` loca
 T8 brought forward on 2026-11-15 with Lars's yes: the T4 API runs on Cloudflare Workers + D1 at https://tidslinje-api.kilars.workers.dev (D1 database `tidslinje`, seeded with the public history fixture deck, 44 cards). CI applies migrations, deploys the Worker, then builds the site against it. Still open for T8: a health route, and a regular backup export.
 
 T7 started on 2026-11-15 at Lars's request: `node api/history-import.ts --push` loaded 1000 history cards from Wikidata into the hosted "historie" deck (README, "History deck"). Titles and reveal lines are Wikidata's bokmål text as it is; the AI curation pass and the reviewer's 50-card check against Wikidata are still to do. Julian-calendar dates keep only the year. Books were left out because their query times out on the public service. On 2026-11-17, after Lars found the cards too niche, the import was changed to rank by how often the Norwegian Wikipedia article is read (last 60 days), to add wars (start and end) and the births, deaths and events among the most read Norwegian articles of the last two years (people only with 50+ Wikipedias), and to cap each type at 15 %. After a play run the same day, Claude curated the 840 best known by hand (`api/src/history-curation.ts`: 111 clearer titles, 171 cards dropped as duplicates, wrong or disputed dates or too obscure), births from 1960 on and shuttle flights named by code were left out, and the bottom 10 % cut; 670 cards are loaded.
+
+On 2026-11-18, at Lars's request (ideas from 2026-11-17), cards got a description: shown under the title on the card in hand and on the opened card, never giving the date away (migration `0002_card_descriptions.sql`, ADR 0006 update). Births and deaths are no longer fetched; about 300 hand-written cards (`api/src/history-milestones.ts`: inventions, discoveries, works, achievements, events, and the few deaths that are events) take their place, each date checked against Wikidata and the Wikipedia intro. Every Wikidata card has a description in `api/src/history-descriptions.ts`, or is left out. The curation can now correct dates. The same change fixed CI, red on main since `331b267` because `api/history-import.ts` lacked three imports.
 
 Notes for coming tasks:
 

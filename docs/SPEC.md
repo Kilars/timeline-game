@@ -19,7 +19,7 @@ The game belongs to the same family as tabletop timeline games, where you place 
 
 1. **Setup.** The player ticks decks, sets the personal share slider and the target (default 10 cards).
 2. **Start.** One card is dealt face up on the timeline. It is locked and counts toward the target.
-3. **Turn.** The player draws a card. Only its title is visible. They tap a gap on the timeline and confirm. Confirming reveals the date and the reveal line; cards themselves are not tappable.
+3. **Turn.** The player draws a card. Only its title and description are visible. They tap a gap on the timeline and confirm. Confirming reveals the date and the reveal line; cards themselves are not tappable.
    - **Correct:** the card stays on the timeline with its date showing, marked as pending. The player chooses *draw another* or *lock in*.
    - **Miss:** the correct date is shown, then the missed card and every pending card from this turn are removed. The turn ends.
    - **Lock in:** all pending cards become permanent. The turn ends.
@@ -48,7 +48,7 @@ Details:
 ## Data
 
 - **Deck:** name, visibility (`public` or `private`), kind (`history` or `personal`). The kind decides which side of the mix slider a deck's cards fall on. The history deck is an ordinary public deck of kind `history`.
-- **Card:** belongs to one deck. Title (shown while placing), reveal line (optional, shown with the date after placing), year, optional month, optional day, source reference.
+- **Card:** belongs to one deck. Title (shown while placing), description (optional, shown with the title while placing and kept after; never gives the date away), reveal line (optional, shown with the date after placing), year, optional month, optional day, source reference.
   - The date is stored as precisely as it is known. Year is a signed integer so dates before year 1 work.
 - **Code:** stored hashed, with a role (`play` or `edit`) and the decks it opens. One master edit code opens everything.
 - All cards live in the database, history included. Personal cards never enter the git repo.

@@ -7,6 +7,7 @@ import type { CardJson, DeckJson } from './types.ts'
 interface CardRow {
   id: string
   title: string
+  description: string | null
   reveal: string | null
   year: number
   month: number | null
@@ -34,7 +35,7 @@ export async function publicDeckCards(db: Database, deckId: string): Promise<Car
   )
   if (!deck) return null
   const rows = await db.all<CardRow>(
-    `SELECT id, title, reveal, year, month, day, source FROM cards WHERE deck_id = ? ORDER BY id`,
+    `SELECT id, title, description, reveal, year, month, day, source FROM cards WHERE deck_id = ? ORDER BY id`,
     [deckId],
   )
   return rows.map(cardJson)
@@ -45,6 +46,7 @@ export function cardJson(row: CardRow): CardJson {
   return {
     id: row.id,
     title: row.title,
+    ...(row.description !== null && { description: row.description }),
     ...(row.reveal !== null && { reveal: row.reveal }),
     year: row.year,
     ...(row.month !== null && { month: row.month }),

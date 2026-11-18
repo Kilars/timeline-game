@@ -5,63 +5,14 @@
 // titles: a clearer title for a card, by card id. Must not give the year away.
 // drop: cards to leave out, by card id, with the reason: the same event as another card, a date
 // people know differently or that is wrong, not an event, or too obscure.
+// dates: the right date where Wikidata's is wrong or not the one people know, checked against the
+// Wikipedia intro on 2026-11-18.
 
 import type { Curation } from './wikidata.ts'
 
 export const CURATION: Curation = {
   titles: {
     'wd-Q19050-P619': 'Romfergen Challenger eksploderer',
-    'wd-Q57287-P569': 'Kong Harald blir født',
-    'wd-Q57287-P570': 'Kong Harald dør',
-    'wd-Q154927-P569': 'Kong Haakon VII blir født',
-    'wd-Q154927-P570': 'Kong Haakon VII dør',
-    'wd-Q154912-P569': 'Kong Olav blir født',
-    'wd-Q154912-P570': 'Kong Olav dør',
-    'wd-Q131045-P569': 'Dronning Sonja blir født',
-    'wd-Q154423-P569': 'Dronning Maud blir født',
-    'wd-Q154423-P570': 'Dronning Maud dør',
-    'wd-Q9682-P569': 'Dronning Elizabeth II blir født',
-    'wd-Q9682-P570': 'Dronning Elizabeth II dør',
-    'wd-Q9439-P569': 'Dronning Victoria blir født',
-    'wd-Q9439-P570': 'Dronning Victoria dør',
-    'wd-Q43274-P569': 'Kong Charles III blir født',
-    'wd-Q45068-P569': 'Kong Carl Gustaf av Sverige blir født',
-    'wd-Q51056-P569': 'Keiser Frans Josef blir født',
-    'wd-Q51056-P570': 'Keiser Frans Josef dør',
-    'wd-Q150782-P569': 'Keiserinne Elisabeth («Sissi») blir født',
-    'wd-Q150782-P570': 'Keiserinne Elisabeth («Sissi») blir drept',
-    'wd-Q47365-P569': 'Marie Antoinette blir født',
-    'wd-Q47365-P570': 'Marie Antoinette blir henrettet',
-    'wd-Q7732-P570': 'Ludvig XVI blir henrettet',
-    'wd-Q80823-P570': 'Anne Boleyn blir henrettet',
-    'wd-Q1048-P570': 'Julius Cæsar blir drept',
-    'wd-Q9685-P570': 'Prinsesse Diana dør',
-    'wd-Q153815-P570': 'Prinsesse Margaret dør',
-    'wd-Q10633-P570': 'Dronningmoren Elizabeth dør',
-    'wd-Q152260-P570': 'Dronning Alexandra av Storbritannia dør',
-    'wd-Q230238-P570': 'Dronning Astrid av Belgia dør',
-    'wd-Q80976-P570': 'Prins Philip dør',
-    'wd-Q52927-P569': 'Karl Johan blir født',
-    'wd-Q52927-P570': 'Karl Johan dør',
-    'wd-Q134128-P570': 'Knut den mektige dør',
-    'wd-Q280856-P569': 'Kong Georg VI blir født',
-    'wd-Q280856-P570': 'Kong Georg VI dør',
-    'wd-Q269412-P569': 'Kong Georg V blir født',
-    'wd-Q269412-P570': 'Kong Georg V dør',
-    'wd-Q20875-P570': 'Kong Edvard VII dør',
-    'wd-Q590227-P570': 'Edvard VIII, kongen som abdiserte, dør',
-    'wd-Q152756-P570': 'Kong Frederik VIII av Danmark dør',
-    'wd-Q52878-P570': 'Kong Gustav VI Adolf av Sverige dør',
-    'wd-Q52890-P570': 'Kong Gustav V av Sverige dør',
-    'wd-Q151305-P570': 'Kong Christian IX av Danmark dør',
-    'wd-Q156617-P570': 'Kong Christian X av Danmark dør',
-    'wd-Q52924-P570': 'Kong Oscar II dør',
-    'wd-Q52926-P570': 'Kong Oscar I dør',
-    'wd-Q29574-P569': 'Dronning Beatrix av Nederland blir født',
-    'wd-Q84192-P569': 'Keiser Maximilian av Mexico blir født',
-    'wd-Q84192-P570': 'Keiser Maximilian av Mexico blir henrettet',
-    'wd-Q6109517-P569': 'Pave Leo XIV blir født',
-    'wd-Q152923-P570': 'Kronprins Rudolf av Østerrike dør (Mayerling)',
     'wd-Q2577588': 'Titanic synker',
     'wd-Q211087': 'Pan Am-flyet sprenges over Lockerbie',
     'wd-Q567787': '«Blücher» senkes i Oslofjorden',
@@ -100,11 +51,9 @@ export const CURATION: Curation = {
     'wd-Q719305': 'Calciopoli, fotballskandalen i Italia',
     'wd-Q814484': 'Ni turgåere omkommer i Djatlovpasset',
     'wd-Q2896625': 'Norges gullbeholdning fraktes ut av landet',
-    'wd-Q7096999': 'Allierte styrker lander i Norge etter krigen',
     'wd-Q189266-P580': 'Tyskland angriper Sovjetunionen',
     'wd-Q79791-P580': 'Reconquista begynner',
     'wd-Q33761-P580': 'Den arabiske våren begynner',
-    'wd-Q12546-P580': 'Korstogstiden begynner',
     'wd-Q12546-P582': 'Korstogstiden tar slutt',
     'wd-Q2748375': 'Den svarte fredagen i Førdefjorden',
     'wd-Q913640': 'Den store smogen i London',
@@ -122,6 +71,12 @@ export const CURATION: Curation = {
     'wd-Q600068': 'Bombeattentatet under OL i Atlanta',
     'wd-Q4568373': 'Raset i Ålesund',
     'wd-Q1312225': 'Togulykken i Getå',
+    'wd-Q11694': 'Kaprede fly blir styrt inn i World Trade Center',
+    'wd-Q689128': 'Haiti blir uavhengig',
+    'wd-Q993160-P571': 'Kull- og stålfellesskapet blir grunnlagt',
+    'wd-Q7159-P571': 'Den afrikanske union blir opprettet',
+    'wd-Q623994': 'SALT II-avtalen blir undertegnet',
+    'wd-Q51649-P580': 'Pave Urban II kaller til det første korstoget',
   },
   drop: {
     'wd-Q361': 'dup',
@@ -131,8 +86,6 @@ export const CURATION: Curation = {
     'wd-Q48249': 'dup',
     'wd-Q33761': 'dup',
     'wd-Q192408': 'dup',
-    'wd-Q9696-P570': 'dup of the assassination',
-    'wd-Q43063-P570': 'dup of Sarajevo',
     'wd-Q19085': 'dup of bin Laden dør',
     'wd-Q543165': 'dup of civil war start',
     'wd-Q1355391': 'dup of civil war end',
@@ -153,11 +106,6 @@ export const CURATION: Curation = {
     'wd-Q257758': 'a movement, not an event',
     'wd-Q85315079': 'award show',
     'wd-Q136402081-P571': 'too new',
-    'wd-Q2633699-P569': 'obscure',
-    'wd-Q242078-P569': 'obscure',
-    'wd-Q43736-P569': 'obscure',
-    'wd-Q43736-P570': 'obscure',
-    'wd-Q211936-P570': 'obscure',
     'wd-Q11998358': 'obscure',
     'wd-Q19378214': 'obscure',
     'wd-Q109473408': 'obscure',
@@ -295,5 +243,41 @@ export const CURATION: Curation = {
     'wd-Q934157': 'obscure',
     'wd-Q481526': 'obscure',
     'wd-Q188433-P619': 'obscure',
+    'wd-Q8729': 'same as Oktoberrevolusjonen and Februarrevolusjonen',
+    'wd-Q482456': 'same as the end of the Vietnam war',
+    'wd-Q153286': 'same as the end of the Great Northern War',
+    'wd-Q2487-P582': 'same as Den westfalske fred',
+    'wd-Q463237': 'the same attacks as the World Trade Center card',
+    'wd-Q638603': 'the same attacks as the World Trade Center card',
+    'wd-Q155103': 'a siege of months',
+    'wd-Q7096999': 'vague',
+    'wd-Q685683-P582': 'date disputed',
+    'wd-Q68969-P580': 'same day as Jugoslaviakrigene bryter ut',
+    'wd-Q8683-P580': 'no agreed start',
+    'wd-Q12546-P580': 'same as the first crusade',
+    'wd-Q76026-P582': 'date disputed',
+    'wd-Q192408-P580': 'date disputed',
+    'wd-Q79911-P580': 'same as Oktoberrevolusjonen',
+    'wd-Q8740-P580': 'no agreed start',
+    'wd-Q219575-P571': 'date disputed',
+    'wd-Q190029-P580': 'no agreed start',
+  },
+  dates: {
+    'wd-Q192050': { year: 1914, month: 6, day: 28 }, // Sarajevo
+    'wd-Q659436': { year: 1943, month: 7, day: 10 }, // Sicilia
+    'wd-Q194132': { year: 1942, month: 11, day: 8 }, // Torch
+    'wd-Q151052': { year: 1944, month: 6, day: 22 }, // Bagration
+    'wd-Q239060': { year: 1916, month: 6 }, // Araberoppstanden
+    'wd-Q1050999': { year: 1974, month: 7, day: 20 }, // Kypros
+    'wd-Q651919': { year: 1746 }, // Culloden
+    'wd-Q126306': { year: 1825 }, // Dekabristene
+    'wd-Q911972': { year: 1940 }, // Dynamo
+    'wd-Q38130-P571': { year: 1920, month: 1, day: 10 }, // Folkeforbundet
+    'wd-Q7159-P571': { year: 2002, month: 7, day: 9 }, // Den afrikanske union
+    'wd-Q1267571': { year: 986 }, // Hjørungavåg
+    'wd-Q51649-P580': { year: 1095, month: 11, day: 27 }, // Clermont
+    'wd-Q150939': { year: 1940, month: 4, day: 9 }, // Weserübung
+    'wd-Q200790-P582': { year: 1962, month: 3, day: 19 }, // Algerie: the ceasefire
+    'wd-Q254106-P582': { year: 1856, month: 3, day: 30 }, // Krim: the peace of Paris
   },
 }

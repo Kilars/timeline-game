@@ -12,6 +12,7 @@ export interface SeedDeck {
   cards: readonly {
     id: string
     title: string
+    description?: string
     reveal?: string
     year: number
     month?: number
@@ -36,12 +37,13 @@ export async function seedDecks(db: Database, decks: readonly SeedDeck[]): Promi
       },
       { sql: 'DELETE FROM cards WHERE deck_id = ?', params: [deck.id] },
       ...deck.cards.map((card) => ({
-        sql: `INSERT INTO cards (id, deck_id, title, reveal, year, month, day, source)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        sql: `INSERT INTO cards (id, deck_id, title, description, reveal, year, month, day, source)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         params: [
           card.id,
           deck.id,
           card.title,
+          card.description ?? null,
           card.reveal ?? null,
           card.year,
           card.month ?? null,

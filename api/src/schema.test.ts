@@ -24,7 +24,7 @@ const insertCard = (id: string, year: number, month: number | null, day: number 
 describe('the schema', () => {
   it('applies to an empty database and creates the tables', async () => {
     db = openSqlite(':memory:')
-    expect(await migrate(db, readMigrations())).toEqual(['0001_init.sql'])
+    expect(await migrate(db, readMigrations())).toEqual(['0001_init.sql', '0002_card_descriptions.sql'])
     const tables = await db.all<{ name: string }>(
       `SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name`,
     )

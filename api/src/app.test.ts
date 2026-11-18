@@ -77,6 +77,7 @@ describe('GET /decks/:id/cards', () => {
     expect(byId.get('h-marathon')).toEqual({
       id: 'h-marathon',
       title: 'Slaget ved Marathon',
+      description: 'Athenske soldater møter en persisk invasjonshær på en slette nordøst for Athen.',
       reveal: 'Athenerne stanser den persiske hæren.',
       year: -490,
     })
@@ -88,7 +89,7 @@ describe('GET /decks/:id/cards', () => {
     }
   })
 
-  it('leaves out a reveal and a source that are NULL, and sends a source that is set', async () => {
+  it('leaves out a description, a reveal and a source that are NULL, and sends those that are set', async () => {
     const app = await api([
       {
         id: 'k',
@@ -98,6 +99,7 @@ describe('GET /decks/:id/cards', () => {
         cards: [
           { id: 'k-1', title: 'Uten noe', year: 1900 },
           { id: 'k-2', title: 'Med kilde', year: 1901, source: 'https://www.wikidata.org/wiki/Q1' },
+          { id: 'k-3', title: 'Med beskrivelse', description: 'Hva kortet handler om.', year: 1902 },
         ],
       },
     ])
@@ -106,6 +108,7 @@ describe('GET /decks/:id/cards', () => {
       cards: [
         { id: 'k-1', title: 'Uten noe', year: 1900 },
         { id: 'k-2', title: 'Med kilde', year: 1901, source: 'https://www.wikidata.org/wiki/Q1' },
+        { id: 'k-3', title: 'Med beskrivelse', description: 'Hva kortet handler om.', year: 1902 },
       ],
     })
   })

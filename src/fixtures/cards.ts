@@ -70,8 +70,61 @@ const personal: Row[] = [
   ['p-torvald-80', 'Bestefar Torvald Testesen fyller 80 år', 'Feiret med bløtkake og trekkspill.', 2018, 3, 12],
 ]
 
+// What each card is about, shown with the title while it is placed. Never the year. Most personal
+// cards have none, as most cards in a real family deck will not.
+const descriptions: Record<string, string> = {
+  'h-marathon': 'Athenske soldater møter en persisk invasjonshær på en slette nordøst for Athen.',
+  'h-aleksander': 'Kongen fra Makedonia har lagt under seg et rike fra Hellas til India.',
+  'h-caesar': 'Romas diktator blir stukket ned av en gruppe senatorer, blant dem Brutus.',
+  'h-pompeii': 'Et vulkanutbrudd ved Napolibukta legger en hel romersk by under aske.',
+  'h-vestromerriket': 'En germansk hærfører avsetter gutten som er keiser i vest, og sender kronen til Konstantinopel.',
+  'h-lindisfarne': 'Nordmenn plyndrer et kloster på en øy utenfor kysten av Nord-England.',
+  'h-stiklestad': 'Olav Haraldsson prøver å vinne tilbake Norge og faller mot en bondehær i Trøndelag.',
+  'h-stamford-bridge': 'Harald Hardråde vil erobre England, men blir overrasket av den engelske hæren nær York.',
+  'h-hastings': 'Hertug Vilhelm av Normandie slår den engelske kongen Harald Godwinson.',
+  'h-magna-carta': 'Engelske baroner tvinger kong Johan til å godta at også kongen er bundet av loven.',
+  'h-svartedauden': 'En pest som har herjet Europa, når Bergen med et skip fra England.',
+  'h-kalmarunionen': 'Margrete får Norge, Danmark og Sverige samlet under én konge.',
+  'h-konstantinopel': 'Den osmanske sultanen Mehmet II erobrer hovedstaden i Østromerriket.',
+  'h-columbus': 'En genovesisk sjøfarer i spansk tjeneste seiler vestover for å finne veien til Asia.',
+  'h-luther': 'En tysk munk protesterer mot kirkens salg av avlatsbrev, og reformasjonen begynner.',
+  'h-usa': 'Tretten britiske kolonier i Nord-Amerika bryter med kongen i London.',
+  'h-bastillen': 'En folkemengde i Paris stormer et fengsel som er et symbol på kongens makt.',
+  'h-grunnloven': 'Riksforsamlingen på Eidsvoll gir Norge en egen grunnlov og velger en konge.',
+  'h-waterloo': 'Napoleons siste slag, mot britiske og prøyssiske styrker sør for Brussel.',
+  'h-darwin': 'Den britiske naturforskeren forklarer hvordan arter endrer seg gjennom naturlig utvalg.',
+  'h-rontgen': 'En tysk fysiker finner stråler som kan ta bilder av skjelettet gjennom huden.',
+  'h-fredsprisen': 'Prisen fra Alfred Nobels testamente blir delt ut for første gang, i Kristiania.',
+  'h-wright': 'To amerikanske brødre flyr et motordrevet fly på strendene i Nord-Carolina.',
+  'h-unionen': 'Stortinget sier opp unionen med Sverige, og Norge blir et selvstendig land.',
+  'h-einstein': 'En ung patentkontorist i Bern viser at tid og rom henger sammen med lysets fart.',
+  'h-sydpolen': 'Fem nordmenn med hundesleder slår den britiske ekspedisjonen til Robert Scott.',
+  'h-titanic': 'Verdens største skip treffer et isfjell i Nord-Atlanteren på sin første tur.',
+  'h-stemmerett': 'Alle kvinner over 25 år får stemme ved valg til Stortinget, på lik linje med menn.',
+  'h-krig-start': 'Skuddene i Sarajevo setter i gang en krig mellom Europas stormakter.',
+  'h-krig-slutt': 'Våpnene tier på vestfronten etter fire år med skyttergravskrig.',
+  'h-penicillin': 'En skotsk forsker ser at en muggsopp dreper bakteriene i en glemt petriskål.',
+  'h-invasjonen': 'Tyske styrker angriper norske byer fra sjøen og lufta samme natt.',
+  'h-frigjoringen': 'Tyskland kapitulerer, og fem år med okkupasjon av Norge er over.',
+  'h-hiroshima': 'Et amerikansk fly slipper en atombombe over en japansk by.',
+  'h-everest': 'En newzealender og en sherpa når toppen av verdens høyeste fjell.',
+  'h-sputnik': 'Sovjetunionen sender en liten metallkule med radiosender i bane rundt jorda.',
+  'h-gagarin': 'En sovjetisk pilot blir det første mennesket i verdensrommet.',
+  'h-muren-bygges': 'Øst-Tyskland stenger grensen gjennom Berlin med piggtråd og betong.',
+  'h-manen': 'Apollo 11 lander, og to amerikanske astronauter går på månen.',
+  'h-ekofisk': 'Phillips finner olje i Nordsjøen, og Norge blir en oljenasjon.',
+  'h-ef': 'Et flertall av velgerne sier nei til at Norge skal bli med i De europeiske fellesskap.',
+  'h-muren-faller': 'Grensen i Berlin åpner etter en kunngjøring på en pressekonferanse, og folk river muren.',
+  'h-lillehammer': 'Norge er vertskap for olympiske vinterleker for andre gang.',
+  'h-iphone': 'Apple begynner å selge en telefon med berøringsskjerm og nesten ingen knapper.',
+  'p-hytta': 'Hytta på Prøvefjellet, som hele familien Testesen bruker hver sommer.',
+  'p-bamsefar': 'En liten berner sennenhund fra en gård i Telemark.',
+}
+
 function toCard(pool: Card['pool'], [id, title, reveal, year, month, day]: Row): Card {
   const card: Card = { id, title, reveal, year, pool }
+  const description = descriptions[id]
+  if (description !== undefined) card.description = description
   if (month !== undefined) card.month = month
   if (day !== undefined) card.day = day
   return card
