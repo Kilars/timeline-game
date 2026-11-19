@@ -52,7 +52,7 @@
 }
 
 .tl-runde__tall {
-  font: var(--tl-type-tittel-l);
+  font: var(--tl-type-runde);
   font-variant-numeric: tabular-nums;
 }
 
@@ -65,7 +65,9 @@
 }
 
 .tl-framdrift__tekst {
-  font: var(--tl-type-tekst-fet);
+  font: var(--tl-type-liten);
+  letter-spacing: var(--tl-sperring);
+  text-transform: uppercase;
 }
 
 .tl-framdrift__tall {
@@ -79,7 +81,7 @@
   transition-delay: var(--tl-etter-vend);
 }
 
-/* ---------- Timeline ---------- */
+/* ---------- Timeline: clippings on the desk ---------- */
 
 .tl-linje {
   position: relative;
@@ -87,6 +89,8 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
+  border-top: var(--tl-strek) solid var(--tl-blekk);
+  background: var(--tl-pult);
 }
 
 .tl-linje__rull {
@@ -104,7 +108,7 @@
   display: flex;
   flex-direction: column;
   margin-top: auto;
-  padding: var(--tl-rom-2) var(--tl-rom-4) var(--tl-rom-2h);
+  padding: var(--tl-rom-2h) var(--tl-rom-5h) var(--tl-rom-3) var(--tl-rom-5);
 }
 
 .tl-rad {
@@ -112,64 +116,9 @@
   align-items: stretch;
 }
 
-/* The line itself, drawn row by row. */
+/* The clippings and their year stamps carry the order, so the line itself is not drawn. */
 .tl-skinne {
-  position: relative;
-  flex: none;
-  display: flex;
-  align-items: center;
-  width: var(--tl-skinne);
-}
-
-.tl-skinne::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--tl-skinne-inn);
-  width: var(--tl-strek-2);
-  background: var(--tl-linje);
-}
-
-.tl-rad:first-child .tl-skinne::before {
-  top: 50%;
-}
-
-.tl-rad:last-child .tl-skinne::before {
-  bottom: 50%;
-}
-
-.tl-node {
-  position: relative;
-  width: var(--tl-node);
-  height: var(--tl-node);
-  border-radius: 50%;
-  background: var(--tl-last);
-  border: 0 solid var(--tl-blekk);
-  box-shadow: 0 0 0 var(--tl-strek-3) var(--tl-bord);
-  transition:
-    background-color var(--tl-tid-sett) var(--tl-ease-ut),
-    border-color var(--tl-tid-sett) var(--tl-ease-ut);
-  transition-delay: var(--tl-tid-rett);
-}
-
-.tl-node[data-state='spill'] {
-  background: var(--tl-spill);
-  border-width: var(--tl-strek-2);
-}
-
-.tl-node[data-state='tapt'] {
-  background: var(--tl-bord);
-  border-width: var(--tl-strek-2);
-  border-color: var(--tl-tapt);
-  box-shadow: none;
-  transition-delay: var(--tl-etter-vend);
-}
-
-.tl-node[data-state='valgt'] {
-  background: var(--tl-bord);
-  border-width: var(--tl-strek-3);
-  box-shadow: none;
+  display: none;
 }
 
 /* More of the line above or below what is on screen. */
@@ -179,14 +128,14 @@
   right: 0;
   left: 0;
   height: var(--tl-uttoning);
-  background: linear-gradient(var(--tl-bord), transparent);
+  background: linear-gradient(var(--tl-pult), transparent);
   pointer-events: none;
 }
 
 .tl-linje__uttoning[data-ende='bunn'] {
   top: auto;
   bottom: 0;
-  background: linear-gradient(transparent, var(--tl-bord));
+  background: linear-gradient(transparent, var(--tl-pult));
 }
 
 .tl-chip {
@@ -216,11 +165,14 @@
   align-items: center;
   gap: var(--tl-rom-1h);
   height: var(--tl-chip);
-  padding: 0 var(--tl-rom-3h);
+  padding: 0 var(--tl-rom-3);
+  border: var(--tl-strek-2) solid var(--tl-blekk);
   border-radius: var(--tl-radius-pille);
-  background: var(--tl-blekk);
-  color: var(--tl-bord);
+  background: var(--tl-bord);
+  color: var(--tl-blekk);
   font: var(--tl-type-liten);
+  letter-spacing: var(--tl-sperring);
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
@@ -240,6 +192,7 @@
   transition: height var(--tl-tid-kort) var(--tl-ease-ut);
 }
 
+/* Idle: a dotted cut line with a small boxed plus. */
 .tl-apning__spor {
   display: flex;
   align-items: center;
@@ -247,7 +200,7 @@
   gap: var(--tl-rom-2);
   width: 100%;
   height: var(--tl-apning);
-  border: var(--tl-strek) dashed var(--tl-kant);
+  border: 0 dashed var(--tl-blekk);
   border-radius: var(--tl-radius-slot);
   color: var(--tl-blekk-2);
   transition:
@@ -255,6 +208,21 @@
     background-color var(--tl-tid-kort) var(--tl-ease-ut);
 }
 
+.tl-apning:not([aria-pressed='true']) .tl-apning__spor::before,
+.tl-apning:not([aria-pressed='true']) .tl-apning__spor::after {
+  content: '';
+  flex: 1;
+  border-top: var(--tl-strek) dotted var(--tl-kant);
+}
+
+.tl-apning:not([aria-pressed='true']) .tl-apning__spor .tl-ikon {
+  box-sizing: content-box;
+  padding: var(--tl-rom-0h);
+  border: var(--tl-strek) solid var(--tl-kant);
+  background: var(--tl-papir);
+}
+
+/* Chosen: an empty, dashed slot of paper where the clipping will go. */
 .tl-apning[aria-pressed='true'] {
   height: calc(var(--tl-apning-valgt) + var(--tl-rom-3));
   border-radius: var(--tl-radius-kort);
@@ -262,11 +230,12 @@
 
 .tl-apning[aria-pressed='true'] .tl-apning__spor {
   height: var(--tl-apning-valgt);
-  border: var(--tl-strek-valgt) solid var(--tl-blekk);
+  border-width: var(--tl-strek-2);
   border-radius: var(--tl-radius-kort);
-  background: var(--tl-spill-flate);
+  background: var(--tl-bord);
   color: var(--tl-blekk);
   font: var(--tl-type-tekst-fet);
+  font-style: italic;
 }
 
 /* ---------- Card: locked is the base ---------- */
@@ -278,8 +247,8 @@
   align-items: center;
   gap: var(--tl-rom-3);
   min-height: var(--tl-kort-min);
-  padding: var(--tl-rom-2h) var(--tl-rom-3h);
-  border: var(--tl-strek) solid var(--tl-linje);
+  padding: var(--tl-rom-2) var(--tl-rom-3) var(--tl-rom-2) var(--tl-rom-2);
+  border: var(--tl-strek) solid var(--tl-kant-kort);
   border-radius: var(--tl-radius-kort);
   background: var(--tl-papir);
   box-shadow: var(--tl-skygge-flat);
@@ -299,11 +268,12 @@
   margin-block: var(--tl-rom-1h);
 }
 
-/* Pending: lifted, tilted, dashed. Never by colour alone. */
+/* Pending: a yellow clipping, lifted, tilted and stamped. Never by colour alone. */
 .tl-kort[data-state='spill'] {
-  border: var(--tl-strek-2) dashed var(--tl-spill);
+  border: var(--tl-strek-2) solid var(--tl-pa-spill);
   background: var(--tl-spill-flate);
   box-shadow: var(--tl-skygge-loftet);
+  color: var(--tl-pa-spill);
   transform: rotate(var(--tl-vipp-a));
 }
 
@@ -325,7 +295,7 @@
 /* The card that was placed wrongly, shown where the player put it. */
 .tl-kort[data-state='tapt'][data-bom] {
   border-style: solid;
-  border-color: var(--tl-linje);
+  border-color: var(--tl-kant-kort);
   color: var(--tl-blekk);
   transform: rotate(var(--tl-vipp-bom)) translateX(var(--tl-skyv-bom));
 }
@@ -334,14 +304,15 @@
 .tl-kort[data-state='hand'] {
   flex: none;
   gap: var(--tl-rom-3h);
+  align-items: flex-start;
   min-height: var(--tl-hand-min);
-  padding: var(--tl-rom-3h) var(--tl-rom-4h);
-  border: 0;
-  border-radius: var(--tl-radius-knapp);
+  padding: var(--tl-rom-3h) var(--tl-rom-4);
+  border-radius: var(--tl-radius-kort);
   box-shadow: var(--tl-skygge-hand);
   transform: rotate(var(--tl-vipp-hand));
 }
 
+/* The year still to find: an empty, dashed stamp. */
 .tl-kort__sporsmal {
   flex: none;
   display: flex;
@@ -350,7 +321,7 @@
   width: var(--tl-sporsmal);
   height: var(--tl-sporsmal);
   border: var(--tl-strek-2) dashed var(--tl-kant);
-  border-radius: 50%;
+  border-radius: var(--tl-radius-liten);
   color: var(--tl-blekk-2);
   font: var(--tl-type-arstall);
 }
@@ -359,9 +330,31 @@
   flex: none;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  gap: var(--tl-rom-0h);
   width: var(--tl-arstall-bredde);
   font: var(--tl-type-arstall);
   font-variant-numeric: tabular-nums;
+}
+
+/* The year in an ink stamp: paper on ink, ink on yellow when pending, grey when lost. */
+.tl-kort__tall,
+.tl-kort__ar--stor > span,
+.tl-kort__ar[data-avslort]::before {
+  padding: var(--tl-rom-0h) var(--tl-rom-1h);
+  background: var(--tl-blekk);
+  color: var(--tl-papir);
+  letter-spacing: var(--tl-sperring-tett);
+}
+
+.tl-kort[data-state='spill'] :is(.tl-kort__tall, .tl-kort__ar--stor > span) {
+  background: var(--tl-pa-spill);
+  color: var(--tl-spill-flate);
+}
+
+.tl-kort[data-state='tapt'] :is(.tl-kort__tall, .tl-kort__ar--stor > span) {
+  background: var(--tl-tapt);
+  color: var(--tl-tapt-flate);
 }
 
 .tl-kort__era {
@@ -407,14 +400,29 @@
   font: var(--tl-type-liten-n);
 }
 
+/* All text on the yellow face is ink, in dark mode too. */
+.tl-kort[data-state='spill'] :is(.tl-kort__beskrivelse, .tl-kort__dato, .tl-kort__avsloring) {
+  color: var(--tl-pa-spill);
+}
+
+/* "På spill" as a red rubber stamp. */
 .tl-kort[data-state='spill'] .tl-kort__under {
+  align-self: flex-start;
+  margin-top: var(--tl-rom-1h);
+  padding: 0 var(--tl-rom-2);
+  border: var(--tl-strek-2) solid var(--tl-spill-tekst);
   color: var(--tl-spill-tekst);
   font: var(--tl-type-liten);
+  letter-spacing: var(--tl-sperring);
+  text-transform: uppercase;
+  rotate: -2deg;
 }
 
 .tl-kort[data-state='tapt'] .tl-kort__under {
   color: var(--tl-tapt);
   font: var(--tl-type-liten);
+  letter-spacing: var(--tl-sperring);
+  text-transform: uppercase;
 }
 
 .tl-kort__las {
@@ -501,10 +509,10 @@
 .tl-brett {
   position: relative;
   flex: none;
-  padding: var(--tl-rom-3h) var(--tl-rom-5) max(var(--tl-rom-6), env(safe-area-inset-bottom));
-  border-top: var(--tl-strek) solid var(--tl-linje);
+  padding: var(--tl-rom-3h) var(--tl-rom-5h) max(var(--tl-rom-6), env(safe-area-inset-bottom));
+  border-top: var(--tl-strek-dobbel) double var(--tl-blekk);
   border-radius: var(--tl-radius-brett) var(--tl-radius-brett) 0 0;
-  background: var(--tl-flate);
+  background: var(--tl-bord);
   box-shadow: var(--tl-skygge-brett);
 }
 
@@ -524,12 +532,12 @@
 
 .tl-brett__plass {
   color: var(--tl-blekk-2);
-  font: var(--tl-type-tekst);
+  font: var(--tl-type-liten-n);
 }
 
 .tl-brett__plass[data-valgt] {
   color: var(--tl-blekk);
-  font: var(--tl-type-tekst-fet);
+  font: var(--tl-type-liten);
 }
 
 .tl-brett__hint {
@@ -541,6 +549,7 @@
   border: var(--tl-strek) dashed var(--tl-kant);
   border-radius: var(--tl-radius-knapp);
   color: var(--tl-blekk-2);
+  font-style: italic;
   text-align: center;
 }
 
@@ -578,8 +587,8 @@
   display: none;
   align-items: center;
   gap: var(--tl-rom-2);
-  color: var(--tl-spill-tekst);
-  font: var(--tl-type-tekst-fet);
+  color: var(--tl-blekk);
+  font: var(--tl-type-liten);
 }
 
 /* ---------- Motion ----------
@@ -671,11 +680,6 @@
   animation: tl-inn var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend) backwards;
 }
 
-/* The dot of the card just placed, and of the marker, shows with the outcome. */
-.tl-node[data-sen] {
-  animation: tl-inn var(--tl-tid-sett) var(--tl-ease-ut) var(--tl-etter-vend) backwards;
-}
-
 /* The tray crossfades to what comes next; after a reveal, not before the year has shown. */
 .tl-brett__innhold {
   animation: tl-inn var(--tl-tid-kort) var(--tl-ease-ut) backwards;
@@ -752,6 +756,7 @@
     overflow: visible;
     clip-path: none;
     font: var(--tl-type-tittel-l);
+    font-style: italic;
     letter-spacing: var(--tl-sperring-tett);
   }
 
@@ -767,7 +772,7 @@
   .tl-brett {
     align-self: center;
     padding: var(--tl-rom-6);
-    border: var(--tl-strek) solid var(--tl-linje);
+    border: var(--tl-strek) solid var(--tl-blekk);
     border-radius: var(--tl-radius-brett);
     box-shadow: var(--tl-skygge-loftet);
   }

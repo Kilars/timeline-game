@@ -16,12 +16,8 @@ html {
 
 body {
   margin: 0;
-  /* The table: bord with two crossed stripes as a tablecloth check. */
+  /* Plain newsprint. */
   background-color: var(--tl-bord);
-  background-image:
-    linear-gradient(var(--tl-rute) 50%, transparent 50%),
-    linear-gradient(90deg, var(--tl-rute) 50%, transparent 50%);
-  background-size: var(--tl-rute-storrelse) var(--tl-rute-storrelse);
   color: var(--tl-blekk);
   font: var(--tl-type-tekst);
 }
@@ -52,9 +48,9 @@ button {
   outline-offset: var(--tl-fokus-avstand);
 }
 
-/* Small capital label: "Runde", "På hånden", "Du brukte". */
+/* Small capital label in the typewriter face: "Runde", "På hånden", "Du brukte". */
 .tl-etikett {
-  color: var(--tl-blekk-2);
+  color: var(--tl-blekk);
   font: var(--tl-type-liten);
   letter-spacing: var(--tl-sperring);
   text-transform: uppercase;
@@ -109,6 +105,7 @@ button {
 }
 
 .tl-knapp[data-farge='spill'] {
+  border: var(--tl-strek-2) solid var(--tl-pa-spill);
   background: var(--tl-spill);
   color: var(--tl-pa-spill);
 }
@@ -131,7 +128,6 @@ button {
 .tl-knapp--stor {
   min-height: var(--tl-knapp-stor);
   border-radius: var(--tl-radius-stor);
-  box-shadow: var(--tl-skygge-loftet);
   font: var(--tl-type-tittel-m);
 }
 

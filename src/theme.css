@@ -1,5 +1,7 @@
 /*
   Tidslinje theme: every colour, font, size, spacing, radius, shadow and timing in the app.
+  The look is "Avis, utklipp": newsprint paper and ink. Cards are clippings on a darker desk, with
+  the year in an ink stamp; what is at risk is yellow, with a red "På spill" stamp.
   Component styles (src/ui/*.css) use only these variables.
   The fonts are loaded by the Google Fonts tag in index.html.
   Dark mode follows the device: one prefers-color-scheme block overrides the colours and shadows.
@@ -9,60 +11,61 @@
   color-scheme: light dark;
 
   /* Fonts */
-  --tl-font-tekst: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible', system-ui, sans-serif;
-  --tl-font-tittel: 'Bricolage Grotesque', 'Trebuchet MS', system-ui, sans-serif;
+  --tl-font-tekst: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --tl-font-tittel: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --tl-font-mono: 'IBM Plex Mono', ui-monospace, 'Courier New', monospace; /* years and labels */
 
   /* Type: weight size/line height family. Nothing in the game is set smaller than 15px. */
   --tl-type-tall: 800 136px/128px var(--tl-font-tittel); /* the result number */
-  --tl-type-merke: 800 46px/50px var(--tl-font-tittel); /* the name of the game */
+  --tl-type-merke: 800 64px/64px var(--tl-font-tittel); /* the name of the game */
   --tl-type-tittel-l: 800 30px/36px var(--tl-font-tittel);
-  --tl-type-arstall: 700 24px/28px var(--tl-font-tittel); /* years, tabular */
+  --tl-type-arstall: 700 19px/24px var(--tl-font-mono); /* years, in their stamp */
   --tl-type-tittel-m: 800 22px/28px var(--tl-font-tittel);
-  --tl-type-hand: 700 21px/26px var(--tl-font-tekst); /* the title of the card in hand */
-  --tl-type-knapp: 700 19px/24px var(--tl-font-tekst);
-  --tl-type-kort: 500 17px/22px var(--tl-font-tekst); /* a card title on the line */
-  --tl-type-tekst: 400 17px/24px var(--tl-font-tekst);
-  --tl-type-liten: 700 15px/20px var(--tl-font-tekst);
+  --tl-type-hand: 800 24px/28px var(--tl-font-tittel); /* the title of the card in hand */
+  --tl-type-knapp: 700 20px/24px var(--tl-font-tekst);
+  --tl-type-kort: 600 19px/24px var(--tl-font-tekst); /* a card title on the line */
+  --tl-type-tekst: 400 18px/24px var(--tl-font-tekst);
+  --tl-type-liten: 600 15px/20px var(--tl-font-mono); /* labels, set in capitals */
   /* Sizes on the boards that the ten styles above do not cover */
-  --tl-type-avslort: 800 34px/36px var(--tl-font-tittel); /* the year on a card just revealed */
-  --tl-type-hand-l: 700 26px/32px var(--tl-font-tekst); /* the card in hand on a wide screen */
-  --tl-type-valg: 700 18px/24px var(--tl-font-tekst); /* the two choices after a correct placement */
+  --tl-type-avslort: 700 30px/34px var(--tl-font-mono); /* the year on a card just revealed */
+  --tl-type-hand-l: 800 28px/34px var(--tl-font-tittel); /* the card in hand on a wide screen */
+  --tl-type-valg: 700 19px/24px var(--tl-font-tekst); /* the two choices after a correct placement */
   --tl-type-tekst-s: 400 16px/22px var(--tl-font-tekst); /* reveal line, tray notes */
-  --tl-type-tekst-fet: 700 17px/22px var(--tl-font-tekst);
-  --tl-type-liten-n: 400 15px/20px var(--tl-font-tekst);
-  --tl-type-spill: 800 26px/32px var(--tl-font-tittel); /* "Spill" on the start screen */
-  --tl-type-teller: 800 28px/32px var(--tl-font-tittel); /* the target on the start screen, tabular */
+  --tl-type-tekst-fet: 700 18px/24px var(--tl-font-tekst);
+  --tl-type-liten-n: italic 400 16px/21px var(--tl-font-tekst); /* notes under a control */
+  --tl-type-spill: 800 30px/34px var(--tl-font-tittel); /* "Spill" on the start screen */
+  --tl-type-teller: 700 26px/30px var(--tl-font-mono); /* the target on the start screen */
+  --tl-type-runde: 700 24px/28px var(--tl-font-mono); /* the round in the top bar */
   --tl-sperring-knapp: 0.01em; /* "Spill" */
-  --tl-sperring: 0.06em; /* small capital labels */
-  --tl-sperring-tett: -0.02em;
+  --tl-sperring: 0.08em; /* small capital labels */
+  --tl-sperring-tett: -0.025em;
   --tl-sperring-tall: -0.03em;
 
-  /* Colour, light */
-  --tl-bord: #dce5ea; /* the table: page background */
-  --tl-rute: rgba(35, 74, 110, 0.06); /* tablecloth check over bord */
-  --tl-papir: #fffcf5; /* card face */
-  --tl-flate: #f2f5f6; /* hand tray, quiet panels */
-  --tl-blekk: #17212a; /* main text, border of the chosen gap */
-  --tl-blekk-2: #46545f; /* secondary text and labels */
-  --tl-linje: #a9b8c2; /* the timeline itself, card edges, dividers */
-  --tl-kant: #6b7b87; /* borders that must be seen: gap slots, empty pips */
-  --tl-last: #234a6e; /* locked and safe, primary button */
-  --tl-pa-last: #fffcf5; /* text on last */
-  --tl-spill: #f0a63a; /* pending and at risk */
-  --tl-pa-spill: #17212a; /* text on spill */
-  --tl-spill-flate: #fff1d6; /* face of a pending card and of the chosen gap */
-  --tl-spill-tekst: #7a4a00; /* the "På spill" label and open lock */
-  --tl-tapt: #55616a; /* text on a missed or lost card */
-  --tl-tapt-flate: #e7ecef; /* face of a missed or lost card */
-  --tl-fokus: #0b5cad; /* keyboard focus ring */
+  /* Colour, light: newsprint */
+  --tl-bord: #f3efe5; /* the paper: page background, top bar, tray */
+  --tl-pult: #e2d9c6; /* the desk the timeline lies on */
+  --tl-papir: #fcfaf4; /* a clipping: card face */
+  --tl-flate: #eae4d6; /* quiet panels */
+  --tl-blekk: #151412; /* ink: main text, rules, the year stamp, buttons */
+  --tl-blekk-2: #57524a; /* secondary text */
+  --tl-linje: #b8b0a1; /* thin rules between rows */
+  --tl-kant: #6e675c; /* borders that must be seen: gap slots, empty pips */
+  --tl-kant-kort: #151412; /* the edge of a clipping */
+  --tl-last: #151412; /* locked and safe, primary button */
+  --tl-pa-last: #f3efe5; /* text on last */
+  --tl-spill: #ffe24d; /* highlighter: pending and at risk */
+  --tl-pa-spill: #151412; /* text on spill */
+  --tl-spill-flate: #ffef8a; /* face of a pending card */
+  --tl-spill-tekst: #bf2f25; /* the red "På spill" stamp and open lock, on the yellow face */
+  --tl-tapt: #6e675c; /* text on a missed or lost card */
+  --tl-tapt-flate: #e9e4d9; /* face of a missed or lost card */
+  --tl-fokus: #1d4a8c; /* keyboard focus ring */
 
-  /* Shadows: height above the table is the risk signal */
-  --tl-skygge-flat: 0 1px 0 rgba(23, 33, 42, 0.1);
-  --tl-skygge-loftet: 0 6px 14px rgba(23, 33, 42, 0.16), 0 1px 3px rgba(23, 33, 42, 0.1);
-  --tl-skygge-hand: 0 16px 32px rgba(23, 33, 42, 0.24), 0 3px 8px rgba(23, 33, 42, 0.12);
-  --tl-skygge-brett: 0 -8px 24px rgba(23, 33, 42, 0.1);
-
-  --tl-rute-storrelse: 44px; /* one square of the tablecloth */
+  /* Shadows: hard offset, as paper laid on paper. Height is still the risk signal. */
+  --tl-skygge-flat: 2px 2px 0 #151412;
+  --tl-skygge-loftet: 4px 4px 0 #151412;
+  --tl-skygge-hand: 5px 5px 0 #151412;
+  --tl-skygge-brett: none;
 
   /* Spacing. The half steps are used inside cards, trays and the start screen only. */
   --tl-rom-0h: 2px; /* between the mix label, slider and ends */
@@ -100,23 +103,23 @@
   --tl-hand-min: 76px; /* the card in hand */
   --tl-hand-min-bred: 120px;
   --tl-sporsmal: 46px; /* the question mark on the card in hand */
-  --tl-arstall-bredde: 58px; /* the year column on a card */
+  --tl-arstall-bredde: 60px; /* the year column on a card */
   --tl-apning: 28px; /* an idle gap slot */
   --tl-apning-valgt: 56px; /* the chosen gap */
   --tl-chip: 34px; /* "Eldre kort", "Nyere kort" */
   --tl-merke: 30px; /* the "Riktig" badge */
   --tl-skinne: 28px; /* the column the timeline runs in */
   --tl-skinne-inn: 6px; /* from the column's left edge to the line */
-  --tl-node: 14px; /* a card's dot on the line */
+  --tl-node: 12px; /* a card's mark on the line */
   --tl-ikon: 18px;
   --tl-ikon-strek: 2.4; /* line weight of an icon, in its 24 unit grid */
   --tl-ikon-s: 16px;
   --tl-ikon-l: 20px;
   --tl-ikon-xl: 22px; /* − and + of the target */
-  --tl-pip-b: 16px; /* progress pip */
-  --tl-pip-h: 8px;
-  --tl-pip-stor-b: 22px; /* progress pip on the result screen */
-  --tl-pip-stor-h: 10px;
+  --tl-pip-b: 14px; /* progress pip, a square */
+  --tl-pip-h: 14px;
+  --tl-pip-stor-b: 18px; /* progress pip on the result screen */
+  --tl-pip-stor-h: 18px;
   --tl-rad: 56px; /* a row in the result list */
   --tl-uttoning: 48px; /* fade over the clipped top edge of the timeline */
   --tl-skjult: 1px; /* the box of text that only screen readers get */
@@ -131,21 +134,22 @@
   --tl-strek-valgt: 2.5px;
   --tl-strek-3: 3px; /* focus ring, ring around a node */
   --tl-fokus-avstand: 2px;
+  --tl-strek-dobbel: 6px; /* a double rule: under the masthead, over the tray */
 
-  /* Corner radius */
-  --tl-radius-liten: 8px;
-  --tl-radius-slot: 10px;
-  --tl-radius-indre: 12px;
-  --tl-radius-kort: 14px;
-  --tl-radius-knapp: 16px;
-  --tl-radius-stor: 20px;
-  --tl-radius-brett: 24px;
-  --tl-radius-pille: 999px;
+  /* Corner radius: paper is cut square */
+  --tl-radius-liten: 0;
+  --tl-radius-slot: 0;
+  --tl-radius-indre: 0;
+  --tl-radius-kort: 0;
+  --tl-radius-knapp: 2px;
+  --tl-radius-stor: 2px;
+  --tl-radius-brett: 0;
+  --tl-radius-pille: 0;
 
   /* Tilt: a state, not an animation */
-  --tl-vipp-a: -1.2deg; /* pending cards lean left and right in turn */
-  --tl-vipp-b: 1deg;
-  --tl-vipp-hand: -1.5deg;
+  --tl-vipp-a: -1deg; /* pending cards lean left and right in turn */
+  --tl-vipp-b: 0.8deg;
+  --tl-vipp-hand: -0.8deg;
   --tl-vipp-bom: 2deg; /* the card that was placed wrongly */
   --tl-vipp-tapt: -2.5deg; /* a pending card lost with it */
   --tl-skyv-bom: 6px; /* how far a missed card slips off the line */
@@ -169,28 +173,30 @@
 }
 
 @media (prefers-color-scheme: dark) {
+  /* The night edition: ink-black paper, the same yellow and red. */
   :root {
-    --tl-bord: #131c24;
-    --tl-rute: rgba(156, 198, 234, 0.04);
-    --tl-papir: #22303d;
-    --tl-flate: #1a2530;
-    --tl-blekk: #f4efe4;
-    --tl-blekk-2: #b4c0ca;
-    --tl-linje: #3d4e5e;
-    --tl-kant: #7f92a3;
-    --tl-last: #9cc6ea;
-    --tl-pa-last: #10202e;
-    --tl-spill: #f2b04e;
-    --tl-pa-spill: #17212a;
-    --tl-spill-flate: #3a2f1c;
-    --tl-spill-tekst: #f6c679;
-    --tl-tapt: #9aa7b2;
-    --tl-tapt-flate: #1b2631;
-    --tl-fokus: #ffd27a;
+    --tl-bord: #151412;
+    --tl-pult: #0c0b0a;
+    --tl-papir: #24221e;
+    --tl-flate: #1d1b18;
+    --tl-blekk: #ede7da;
+    --tl-blekk-2: #aca595;
+    --tl-linje: #46413a;
+    --tl-kant: #8a8274;
+    --tl-kant-kort: #625b50;
+    --tl-last: #ede7da;
+    --tl-pa-last: #151412;
+    --tl-spill: #e8cc2a;
+    --tl-pa-spill: #151412;
+    --tl-spill-flate: #e8cc2a;
+    --tl-spill-tekst: #a8231a;
+    --tl-tapt: #9a9384;
+    --tl-tapt-flate: #1f1d1a;
+    --tl-fokus: #8db2ee;
 
-    --tl-skygge-flat: 0 1px 0 rgba(0, 0, 0, 0.4);
-    --tl-skygge-loftet: 0 6px 14px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.3);
-    --tl-skygge-hand: 0 16px 32px rgba(0, 0, 0, 0.55), 0 3px 8px rgba(0, 0, 0, 0.35);
-    --tl-skygge-brett: 0 -8px 24px rgba(0, 0, 0, 0.35);
+    --tl-skygge-flat: 2px 2px 0 #3e3a33;
+    --tl-skygge-loftet: 4px 4px 0 #3e3a33;
+    --tl-skygge-hand: 5px 5px 0 #3e3a33;
+    --tl-skygge-brett: none;
   }
 }

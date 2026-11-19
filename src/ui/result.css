@@ -23,6 +23,9 @@
 }
 
 .tl-resultat__tittel {
+  align-self: stretch;
+  padding-bottom: var(--tl-rom-2h);
+  border-bottom: var(--tl-strek-dobbel) double var(--tl-blekk);
   font: var(--tl-type-tittel-l);
 }
 
@@ -34,10 +37,10 @@
   gap: var(--tl-rom-1);
   margin: var(--tl-rom-3) var(--tl-rom-4) 0;
   padding: var(--tl-rom-6) var(--tl-rom-5);
-  border: var(--tl-strek) solid var(--tl-linje);
+  border: var(--tl-strek) solid var(--tl-kant-kort);
   border-radius: var(--tl-radius-brett);
   background: var(--tl-papir);
-  box-shadow: var(--tl-skygge-loftet);
+  box-shadow: var(--tl-skygge-hand);
   transform: rotate(var(--tl-vipp-hand));
 }
 
@@ -55,9 +58,7 @@
   display: flex;
   flex-direction: column;
   margin: var(--tl-rom-2) 0 0;
-  border: var(--tl-strek) solid var(--tl-linje);
-  border-radius: var(--tl-radius-knapp);
-  background: var(--tl-flate);
+  border-block: var(--tl-strek-2) solid var(--tl-blekk);
 }
 
 .tl-resultat__rad {
@@ -66,7 +67,6 @@
   justify-content: space-between;
   gap: var(--tl-rom-3);
   min-height: var(--tl-rad);
-  padding: 0 var(--tl-rom-4);
 }
 
 .tl-resultat__rad + .tl-resultat__rad {

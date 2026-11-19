@@ -1,6 +1,6 @@
 # State
 
-Updated: 2026-11-18
+Updated: 2026-11-19
 
 ## Current state
 
@@ -24,6 +24,8 @@ T7 started on 2026-11-15 at Lars's request: `node api/history-import.ts --push` 
 
 On 2026-11-18, at Lars's request (ideas from 2026-11-17), cards got a description: shown under the title on the card in hand and on the opened card, never giving the date away (migration `0002_card_descriptions.sql`, ADR 0006 update). Births and deaths are no longer fetched; about 300 hand-written cards (`api/src/history-milestones.ts`: inventions, discoveries, works, achievements, events, and the few deaths that are events) take their place, each date checked against Wikidata and the Wikipedia intro. Every Wikidata card has a description in `api/src/history-descriptions.ts`, or is left out. The curation can now correct dates. The same change fixed CI, red on main since `331b267` because `api/history-import.ts` lacked three imports.
 
+On 2026-11-19, at Lars's request, the app was restyled to the "Avis, utklipp" look. Lars found the checked tablecloth was not working and picked this look on 2026-11-18 from three alternatives on a second private Design canvas; its link is kept out of this repo. The look is newsprint paper and ink, set in Newsreader and IBM Plex Mono. Cards are clippings on a darker desk, with the year in an ink stamp. Pending cards are yellow with a red "På spill" stamp. Corners are square and shadows are hard offsets. Dark mode is a night edition of the same paper. Only the tokens, the component CSS and the font link changed. The timeline's line and dots are no longer drawn, because the clippings and stamps carry the order.
+
 Notes for coming tasks:
 
 - T5: `codes.hash` is a unique lookup hash, so short play codes need a server-side pepper: a Worker secret (`wrangler secret put`), never in the repo.
@@ -34,7 +36,7 @@ Notes for coming tasks:
 ## Waiting on Lars
 
 1. **Backend:** deployed 2026-11-15 on Cloudflare Workers + D1 (ADR 0007). The API answered from Lars's laptop on the home network, so Nettvern does not block `workers.dev` there; phones on mobile data are untested.
-2. **Design handoff:** arrived on Lars's private Design canvas on 2026-11-15 (16 artboards: seven screens, dark mode, the game at 1280, card states, tokens, motion, developer handoff). Lars has not said it is final; if it changes, T9 picks up the differences. The canvas link is kept out of this public repo; the orchestrator session has it. Before T9, fetch the artboards into the git-ignored folder `design-handoff/`.
+2. **Design handoff:** arrived on Lars's private Design canvas on 2026-11-15 (16 artboards: seven screens, dark mode, the game at 1280, card states, tokens, motion, developer handoff). Lars has not said it is final; if it changes, T9 picks up the differences. The canvas link is kept out of this public repo; the orchestrator session has it. Before T9, fetch the artboards into the git-ignored folder `design-handoff/`. On 2026-11-18 Lars replaced the handoff's look with "Avis, utklipp" (see above). Its layout and states still hold, but T9 checks the screens against the new look. Screens the new canvas does not show follow the same paper, stamps and colours.
 3. Optional: overrule any default listed at the bottom of `SPEC.md`.
 
 ## Next task
@@ -54,4 +56,4 @@ T5: codes. Build it in the design (board "6 Code entry", `design-handoff/CodeEnt
 | T6 | Editor: edit codes, add, change and delete cards, create decks | Stories A1 to A4, O1 | Not started |
 | T7 | History import: Wikidata query script, AI curation to about 1000 Norwegian cards, load into the database | Story O5; a sample of 50 cards checked against Wikidata by the reviewer | Not started |
 | T8 | Backend deploy to Cloudflare Workers + D1 (ADR 0007) | The live site plays against the hosted backend from a phone | Waits on Lars's Cloudflare account and yes |
-| T9 | Design check after T6: compare every screen with the handoff at phone size and 1280, light and dark, and fix what differs | Reviewer finds no differences that matter; gate passes | Not started |
+| T9 | Design check after T6: compare every screen with the handoff's layout and the "Avis, utklipp" look at phone size and 1280, light and dark, and fix what differs | Reviewer finds no differences that matter; gate passes | Not started |

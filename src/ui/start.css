@@ -14,21 +14,34 @@
   padding: var(--tl-rom-6h) var(--tl-rom-5) var(--tl-rom-6);
 }
 
+/* A masthead: a thin rule, the name, a double rule, the ingress in italics. */
 .tl-start__hode {
   display: flex;
   flex-direction: column;
-  gap: var(--tl-rom-1h);
+  align-items: center;
+  gap: var(--tl-rom-2h);
+  padding-top: var(--tl-rom-2h);
+  border-top: var(--tl-strek) solid var(--tl-blekk);
+  text-align: center;
 }
 
 .tl-start__merke {
+  align-self: stretch;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--tl-rom-3);
+  padding-bottom: var(--tl-rom-2h);
+  border-bottom: var(--tl-strek-dobbel) double var(--tl-blekk);
 }
 
 .tl-start__tittel {
   font: var(--tl-type-merke);
   letter-spacing: var(--tl-sperring-tett);
+}
+
+.tl-start__ingress {
+  font-style: italic;
 }
 
 .tl-start__ingress,
@@ -40,34 +53,9 @@
   font: var(--tl-type-liten-n);
 }
 
-/* The mark beside the name */
+/* The newspaper masthead has no mark beside the name. */
 .tl-logo {
-  flex: none;
-  width: var(--tl-logo-b);
-  height: var(--tl-logo-h);
-}
-
-.tl-logo__linje {
-  stroke: var(--tl-linje);
-}
-
-.tl-logo__last {
-  fill: var(--tl-last);
-}
-
-.tl-logo__spill {
-  fill: var(--tl-spill);
-  stroke: var(--tl-blekk);
-}
-
-.tl-logo__spillkort {
-  fill: var(--tl-spill-flate);
-  stroke: var(--tl-spill);
-}
-
-.tl-logo__lastkort {
-  fill: var(--tl-papir);
-  stroke: var(--tl-last);
+  display: none;
 }
 
 /* One setting: a label over its control */
@@ -75,6 +63,19 @@
   display: flex;
   flex-direction: column;
   gap: var(--tl-rom-2);
+}
+
+/* A section label runs into a rule, as in a newspaper. */
+.tl-start__del:not(.tl-start__del--rad, .tl-start__del--tett) > .tl-etikett {
+  display: flex;
+  align-items: center;
+  gap: var(--tl-rom-2h);
+}
+
+.tl-start__del:not(.tl-start__del--rad, .tl-start__del--tett) > .tl-etikett::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--tl-blekk);
 }
 
 .tl-start__del--tett {
@@ -92,10 +93,6 @@
 .tl-stokker {
   display: flex;
   flex-direction: column;
-  border: var(--tl-strek) solid var(--tl-linje);
-  border-radius: var(--tl-radius-knapp);
-  background: var(--tl-papir);
-  box-shadow: var(--tl-skygge-flat);
 }
 
 .tl-stokk {
@@ -103,7 +100,6 @@
   align-items: center;
   gap: var(--tl-rom-3h);
   min-height: var(--tl-rad);
-  padding: 0 var(--tl-rom-4);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -112,13 +108,33 @@
   border-top: var(--tl-strek) solid var(--tl-linje);
 }
 
+/* A square ink tick box. */
 .tl-stokk__kryss {
   flex: none;
+  display: grid;
+  place-content: center;
   width: var(--tl-avkryss);
   height: var(--tl-avkryss);
   margin: 0;
-  accent-color: var(--tl-last);
+  border: var(--tl-strek-2) solid var(--tl-blekk);
+  border-radius: var(--tl-radius-liten);
+  background: transparent;
+  appearance: none;
   cursor: pointer;
+}
+
+.tl-stokk__kryss:checked {
+  background: var(--tl-blekk);
+}
+
+.tl-stokk__kryss:checked::after {
+  content: '';
+  width: var(--tl-rom-1h);
+  height: var(--tl-rom-3);
+  margin-top: calc(-1 * var(--tl-rom-1));
+  border: solid var(--tl-bord);
+  border-width: 0 var(--tl-strek-3) var(--tl-strek-3) 0;
+  rotate: 45deg;
 }
 
 .tl-stokk__navn {
@@ -130,7 +146,9 @@
 
 .tl-stokk__type {
   color: var(--tl-blekk-2);
-  font: var(--tl-type-liten-n);
+  font: var(--tl-type-liten);
+  letter-spacing: var(--tl-sperring);
+  text-transform: uppercase;
 }
 
 /* Mix */
@@ -144,13 +162,14 @@
 
 .tl-blanding__verdi {
   font: var(--tl-type-tekst-fet);
+  font-style: italic;
 }
 
 .tl-blanding {
   width: 100%;
   height: var(--tl-trykk);
   margin: 0;
-  accent-color: var(--tl-last);
+  accent-color: var(--tl-blekk);
   cursor: pointer;
 }
 
@@ -167,15 +186,12 @@
 }
 
 /* Target: − number + */
+/* Three boxes in an ink frame. */
 .tl-teller {
   display: flex;
   flex: none;
-  align-items: center;
-  gap: var(--tl-rom-1);
-  padding: var(--tl-rom-1);
-  border: var(--tl-strek) solid var(--tl-linje);
-  border-radius: var(--tl-radius-knapp);
-  background: var(--tl-papir);
+  align-items: stretch;
+  border: var(--tl-strek-2) solid var(--tl-blekk);
 }
 
 .tl-teller__knapp {
@@ -187,7 +203,7 @@
   padding: 0;
   border: 0;
   border-radius: var(--tl-radius-indre);
-  background: var(--tl-flate);
+  background: transparent;
   color: var(--tl-blekk);
   cursor: pointer;
   transition: transform var(--tl-tid-kort) var(--tl-ease-ut);
@@ -203,7 +219,10 @@
 }
 
 .tl-teller__tall {
-  min-width: var(--tl-teller-tall);
+  display: grid;
+  place-items: center;
+  min-width: calc(var(--tl-teller-tall) + var(--tl-rom-2));
+  border-inline: var(--tl-strek-2) solid var(--tl-blekk);
   font: var(--tl-type-teller);
   font-variant-numeric: tabular-nums;
   text-align: center;
@@ -213,11 +232,11 @@
 .tl-presisjon {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--tl-rom-1);
-  padding: var(--tl-rom-1);
-  border: var(--tl-strek) solid var(--tl-linje);
-  border-radius: var(--tl-radius-knapp);
-  background: var(--tl-papir);
+  border: var(--tl-strek-2) solid var(--tl-blekk);
+}
+
+.tl-presisjon__knapp + .tl-presisjon__knapp {
+  border-left: var(--tl-strek-2) solid var(--tl-blekk);
 }
 
 .tl-presisjon__knapp {
@@ -228,6 +247,7 @@
   background: transparent;
   color: var(--tl-blekk);
   font: var(--tl-type-valg);
+  font-weight: 500;
   cursor: pointer;
   transition: background-color var(--tl-tid-kort) var(--tl-ease-ut);
 }
@@ -235,6 +255,7 @@
 .tl-presisjon__knapp[aria-pressed='true'] {
   background: var(--tl-last);
   color: var(--tl-pa-last);
+  font-weight: 700;
 }
 
 /* "Spill" at the foot */
