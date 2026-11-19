@@ -76,9 +76,17 @@ function checkState(state: GameState, cards: readonly Card[]): void {
   if (state.phase === 'deciding') {
     expect(timeline.some((entry) => !entry.locked)).toBe(true)
   }
+  // Locked cards are never lost, so the best turn is never more than the locked cards it added.
+  const { mostInTurn, turnsUsed } = state.player
+  expect(mostInTurn).toBeGreaterThanOrEqual(0)
+  expect(mostInTurn).toBeLessThanOrEqual(timeline.filter((entry) => entry.locked).length - 1)
   if (state.phase === 'won') {
     expect(timeline).toHaveLength(state.config.target)
-    expect(score(state)).toBe(state.player.turnsUsed)
+    expect(score(state)).toBe(turnsUsed)
+    // The checks the records API makes on a claim (ADR 0010): a real game always passes them.
+    expect(mostInTurn).toBeGreaterThanOrEqual(1)
+    expect(mostInTurn).toBeLessThanOrEqual(state.config.target - 1)
+    expect(state.config.target - 1).toBeLessThanOrEqual(turnsUsed * mostInTurn)
   } else {
     expect(timeline.length).toBeLessThan(state.config.target)
     expect(score(state)).toBeNull()
@@ -97,10 +105,15 @@ test('a drawn card always has a correct gap, and playing only correct gaps ends 
     const { next, int } = random(seed + 1_000_000)
     let state = createGame(cards, options)
     let turns = state.phase === 'placing' ? 1 : 0
+    // The most cards secured in one turn, counted here the slow way.
+    let best = 0
+    const pendingNow = () => state.player.timeline.filter((entry) => !entry.locked).length
     checkState(state, cards)
 
     for (let step = 0; state.phase !== 'won' && state.phase !== 'exhausted'; step++) {
       expect(step).toBeLessThan(200)
+      // Pending cards are secured by a win, a lock in, or the cards running out after a draw.
+      const pending = pendingNow()
       if (state.phase === 'placing') {
         const gaps = correctGaps(state)
         expect(gaps.length).toBeGreaterThan(0)
@@ -115,6 +128,9 @@ test('a drawn card always has a correct gap, and playing only correct gaps ends 
         state = next() < 0.5 ? drawAnother(state) : lockIn(state)
         if (state.phase === 'placing' && state.player.timeline.every((entry) => entry.locked)) turns++
       }
+      if (state.phase === 'won') best = Math.max(best, pending + 1)
+      else if (pending > 0 && pendingNow() === 0) best = Math.max(best, pending)
+      expect(state.player.mostInTurn).toBe(best)
       checkState(state, cards)
     }
 

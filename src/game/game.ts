@@ -1,6 +1,6 @@
 import { correctGapsFor } from './compare.ts'
 import { roll, seedRng, shuffle } from './rng.ts'
-import type { Card, GameConfig, GameState, Pool, TimelineEntry } from './types.ts'
+import type { Card, GameConfig, GameState, Player, Pool, TimelineEntry } from './types.ts'
 
 /** The settings a game uses when the caller does not give them. The seed has no default. */
 export const DEFAULT_CONFIG = {
@@ -42,7 +42,7 @@ export function createGame(cards: readonly Card[], options: GameOptions): GameSt
   return startTurn({
     config,
     phase: 'placing',
-    player: { timeline: [{ card: start.card, locked: true }], turnsUsed: 0 },
+    player: { timeline: [{ card: start.card, locked: true }], turnsUsed: 0, mostInTurn: 0 },
     drawn: null,
     miss: null,
     piles: start.piles,
@@ -86,12 +86,7 @@ export function placeCard(state: GameState, gap: number): GameState {
     ...timeline.slice(gap),
   ]
   if (placed.length >= state.config.target) {
-    return {
-      ...state,
-      phase: 'won',
-      drawn: null,
-      player: { ...state.player, timeline: lockAll(placed) },
-    }
+    return { ...state, phase: 'won', drawn: null, player: secure(state.player, placed) }
   }
   return { ...state, phase: 'deciding', drawn: null, player: { ...state.player, timeline: placed } }
 }
@@ -117,10 +112,7 @@ export function lockIn(state: GameState): GameState {
   if (state.player.timeline.every((entry) => entry.locked)) {
     throw new Error('Cannot lock in: no cards are pending')
   }
-  return startTurn({
-    ...state,
-    player: { ...state.player, timeline: lockAll(state.player.timeline) },
-  })
+  return startTurn({ ...state, player: secure(state.player, state.player.timeline) })
 }
 
 /** After a miss: starts the next turn. */
@@ -163,12 +155,7 @@ function startTurn(state: GameState): GameState {
 function drawCard(state: GameState): GameState {
   const { card, piles, rng } = takeCard(state.piles, state.rng, state.config)
   if (!card) {
-    return {
-      ...state,
-      phase: 'exhausted',
-      drawn: null,
-      player: { ...state.player, timeline: lockAll(state.player.timeline) },
-    }
+    return { ...state, phase: 'exhausted', drawn: null, player: secure(state.player, state.player.timeline) }
   }
   return { ...state, phase: 'placing', drawn: card, piles, rng }
 }
@@ -191,8 +178,14 @@ function takeCard(
   return { card: card ?? null, piles: { ...piles, [pool]: rest }, rng: step.rng }
 }
 
-function lockAll(timeline: readonly TimelineEntry[]): TimelineEntry[] {
-  return timeline.map((entry) => (entry.locked ? entry : { ...entry, locked: true }))
+/** Locks every pending card on `timeline` and counts them toward the player's best turn. */
+function secure(player: Player, timeline: readonly TimelineEntry[]): Player {
+  const pending = timeline.filter((entry) => !entry.locked).length
+  return {
+    ...player,
+    timeline: timeline.map((entry) => (entry.locked ? entry : { ...entry, locked: true })),
+    mostInTurn: Math.max(player.mostInTurn, pending),
+  }
 }
 
 function checkConfig(config: GameConfig): void {

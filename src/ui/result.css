@@ -101,3 +101,160 @@
   gap: var(--tl-rom-3);
   margin-top: auto;
 }
+
+/* The records for everyone (ADR 0010): two rows, each with the record and its holder on the right
+   and this game's own number under the name of the record. */
+.tl-rekorder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-2);
+}
+
+.tl-rekorder__hode {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--tl-rom-1) var(--tl-rom-3);
+}
+
+.tl-rekorder__nokkel {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten-n);
+}
+
+.tl-rekorder__liste {
+  border-block: var(--tl-strek-2) solid var(--tl-blekk);
+}
+
+.tl-rekorder__rad {
+  display: grid;
+  /* Three columns, so each line splits the width its own way: the record's name beside the short
+     value, and this game's short number beside the holder's name, which may be long and wraps. */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0 var(--tl-rom-3);
+  padding-block: var(--tl-rom-2h);
+}
+
+.tl-rekorder__rad + .tl-rekorder__rad {
+  border-top: var(--tl-strek) solid var(--tl-linje);
+}
+
+.tl-rekorder__navn {
+  grid-column: 1 / 3;
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-rekorder__verdi {
+  grid-column: 3;
+  font: var(--tl-type-tittel-m);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.tl-rekorder__din,
+.tl-rekorder__holder {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten-n);
+}
+
+.tl-rekorder__din {
+  grid-column: 1;
+}
+
+.tl-rekorder__holder {
+  grid-column: 2 / 4;
+  max-width: 100%;
+  overflow: hidden;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.tl-rekorder__feil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-2);
+}
+
+.tl-rekorder__melding {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-tekst-s);
+  text-align: center;
+}
+
+/* The claim, when the game beat a record: a clipping of its own at the top of the screen. */
+.tl-krav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tl-rom-2);
+  padding: var(--tl-rom-4);
+  border: var(--tl-strek-2) solid var(--tl-blekk);
+  border-radius: var(--tl-radius-brett);
+  background: var(--tl-papir);
+  box-shadow: var(--tl-skygge-flat);
+}
+
+.tl-krav__tekst {
+  font: var(--tl-type-tittel-m);
+  text-align: center;
+}
+
+.tl-krav__etikett {
+  font: var(--tl-type-tekst-fet);
+}
+
+.tl-krav__felt {
+  display: flex;
+  gap: var(--tl-rom-2);
+}
+
+.tl-krav__input {
+  flex: 1;
+  min-width: 0;
+  height: var(--tl-felt);
+  margin: 0;
+  padding: 0 var(--tl-rom-3);
+  border: var(--tl-strek) solid var(--tl-kant);
+  border-radius: var(--tl-radius-liten);
+  background: var(--tl-papir);
+  color: var(--tl-blekk);
+  font: var(--tl-type-felt);
+}
+
+.tl-knapp.tl-krav__lagre {
+  flex: none;
+  width: auto;
+  min-height: var(--tl-felt);
+  padding: 0 var(--tl-rom-5);
+  border-radius: var(--tl-radius-liten);
+}
+
+/* Two classes, so it wins over `.tl-knapp[data-farge]` in base.css, which loads later. */
+.tl-knapp.tl-krav__lagre:disabled {
+  background: var(--tl-tapt-flate);
+  color: var(--tl-tapt);
+  cursor: default;
+  transform: none;
+}
+
+.tl-krav__hint {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-liten-n);
+}
+
+.tl-krav__tall {
+  color: var(--tl-blekk-2);
+  font: var(--tl-type-tekst-s);
+  text-align: center;
+}
+
+.tl-krav__feil {
+  color: var(--tl-blekk);
+  font: var(--tl-type-tekst-fet);
+}
+
+/* Kept in the page while empty, so screen readers announce what appears in it; it takes no room. */
+.tl-krav__feil:empty {
+  margin-top: calc(-1 * var(--tl-rom-2));
+}

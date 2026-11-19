@@ -21,6 +21,7 @@ Tags: **V1** is in the first build. **Later** is parked in `IDEAS.md` until Lars
 | P13 | As a player I get cards I have not seen recently before cards I already know. | Later |
 | P14 | As players we take turns on one phone, first to the target wins. | Later |
 | P15 | As a player I install the game on my home screen. | Later |
+| P16 | As a player I see the records for everyone at my target and precision, the fewest turns and the most cards in one turn, and put my name on one when I beat it. | V1 |
 
 ## Admin (holder of an edit code)
 

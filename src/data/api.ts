@@ -8,6 +8,13 @@ import type { Deck } from '../ui/setup.ts'
 /** The API could not be reached, answered with an error, or sent something that is not a deck. */
 export class ApiError extends Error {
   override name = 'ApiError'
+  /** The HTTP status when the API answered with an error; undefined otherwise. */
+  status?: number
+
+  constructor(message: string, options?: ErrorOptions & { status?: number }) {
+    super(message, options)
+    this.status = options?.status
+  }
 }
 
 type Fetch = (url: string, init?: RequestInit) => Promise<Response>
@@ -43,16 +50,29 @@ export async function fetchDecks(apiUrl: string, options: FetchOptions = {}): Pr
 }
 
 /** GETs a URL and reads its JSON. Null for a 404 when `allowMissing` is set. */
-async function getJson(url: string, options: FetchOptions, allowMissing = false): Promise<unknown> {
-  const { fetch: fetchFn = (input, init) => fetch(input, init), signal } = options
+function getJson(url: string, options: FetchOptions, allowMissing = false): Promise<unknown> {
+  return requestJson(url, options, {}, allowMissing)
+}
+
+/**
+ * Sends a request and reads the JSON it gets back. `init` gives the method, headers and body; JSON
+ * is always asked for. Null for a 404 when `allowMissing` is set. Throws `ApiError` otherwise.
+ */
+export async function requestJson(
+  url: string,
+  options: FetchOptions,
+  init: { method?: string; headers?: Record<string, string>; body?: string } = {},
+  allowMissing = false,
+): Promise<unknown> {
+  const { fetch: fetchFn = (input, request) => fetch(input, request), signal } = options
   let response: Response
   try {
-    response = await fetchFn(url, { signal, headers: { Accept: 'application/json' } })
+    response = await fetchFn(url, { ...init, signal, headers: { Accept: 'application/json', ...init.headers } })
   } catch (error) {
     throw new ApiError(`Could not reach ${url}`, { cause: error })
   }
   if (allowMissing && response.status === 404) return null
-  if (!response.ok) throw new ApiError(`${url} answered ${response.status}`)
+  if (!response.ok) throw new ApiError(`${url} answered ${response.status}`, { status: response.status })
   try {
     return await response.json()
   } catch (error) {
@@ -121,11 +141,12 @@ function optionalPart(value: unknown, max: number, id: string, name: string): nu
   return value
 }
 
-function field(json: unknown, name: string): unknown {
+/** A field of a JSON object, or undefined when `json` is not an object. */
+export function field(json: unknown, name: string): unknown {
   return isObject(json) ? (json as Record<string, unknown>)[name] : undefined
 }
 
-function isObject(value: unknown): value is object {
+export function isObject(value: unknown): value is object {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 

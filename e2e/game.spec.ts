@@ -12,6 +12,7 @@ import {
   nextTurn,
   placeCorrectly,
   placeWrongly,
+  playToTheEnd,
   seeResult,
   startGame,
   timeline,
@@ -24,20 +25,6 @@ const drawButton = (page: Page) => page.getByRole('button', { name: /^Trekk et k
 const lockButton = (page: Page) => page.getByRole('button', { name: /^Lås inn/ })
 const turn = (page: Page) => page.locator('.tl-runde')
 const progress = (page: Page) => page.locator('.tl-framdrift__tekst')
-
-/**
- * Plays a seeded game to the end with every card placed correctly. `push` says, after each correct
- * placement, whether to draw another card (true) or lock in (false).
- */
-async function playToTheEnd(page: Page, push: () => boolean): Promise<Outcome> {
-  for (let step = 0; step < 60; step++) {
-    const { outcome } = await placeCorrectly(page)
-    if (outcome !== 'deciding') return outcome
-    if (push()) await drawAnother(page)
-    else if ((await lockIn(page)) !== 'placing') throw new Error('No new turn after locking in')
-  }
-  throw new Error('The game did not end')
-}
 
 test.beforeEach(async ({ page }) => {
   await page.goto('./?seed=1')
@@ -192,9 +179,11 @@ test('a full game reaches the result view with the right number of turns', async
 
   await expect(page.getByRole('heading', { level: 1, name: '10 kort på tidslinjen' })).toBeVisible()
   await expect(page.locator('.tl-resultat__tall')).toHaveText('9')
-  await expect(page.locator('.tl-resultat__liste')).toContainText('Din rekord9 runder')
-  await expect(page.locator('.tl-resultat__liste')).toContainText('Dette spillet9 runder')
-  await expect(page.locator('.tl-resultat__merknad')).toHaveText('Ny rekord!')
+  await expect(page.locator('.tl-resultat__liste')).toHaveText('Ditt beste9 runder')
+  await expect(page.locator('.tl-resultat__merknad')).toHaveText('Nytt personlig beste!')
+  // Built without an API, the app has no records for everyone to show.
+  await expect(page.getByText('Rekorder for alle')).toHaveCount(0)
+  await expect(page.getByLabel('Navnet ditt')).toHaveCount(0)
 
   // "Spill igjen" starts a new game.
   await page.getByRole('button', { name: 'Spill igjen' }).click()
@@ -210,16 +199,15 @@ test('the best score survives a reload', async ({ page }) => {
   await seeResult(page)
   await expect(page.locator('.tl-resultat__tall')).toHaveText('1')
   await expect(page.locator('.tl-resultat__enhet')).toHaveText('runde')
-  await expect(page.locator('.tl-resultat__merknad')).toHaveText('Ny rekord!')
+  await expect(page.locator('.tl-resultat__merknad')).toHaveText('Nytt personlig beste!')
 
   await page.reload()
   await startGame(page)
   expect(await playToTheEnd(page, () => false)).toBe('won')
   await seeResult(page)
   await expect(page.locator('.tl-resultat__tall')).toHaveText('9')
-  await expect(page.locator('.tl-resultat__liste')).toContainText('Din rekord1 runde')
-  await expect(page.locator('.tl-resultat__liste')).toContainText('Dette spillet9 runder')
-  await expect(page.locator('.tl-resultat__merknad')).toHaveText('8 runder unna rekorden din.')
+  await expect(page.locator('.tl-resultat__liste')).toHaveText('Ditt beste1 runde')
+  await expect(page.locator('.tl-resultat__merknad')).toHaveText('8 runder unna ditt beste.')
 })
 
 test('the game works when storage is blocked', async ({ page }) => {
@@ -235,7 +223,7 @@ test('the game works when storage is blocked', async ({ page }) => {
   expect(await playToTheEnd(page, () => true)).toBe('won')
   await seeResult(page)
   await expect(page.locator('.tl-resultat__tall')).toHaveText('1')
-  await expect(page.locator('.tl-resultat__merknad')).toHaveText('Ny rekord!')
+  await expect(page.locator('.tl-resultat__merknad')).toHaveText('Nytt personlig beste!')
 })
 
 test('the drawn card stays in reach and nothing scrolls sideways on a small phone', async ({ page }) => {

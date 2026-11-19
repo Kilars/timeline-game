@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { apiUrlFrom } from './data/api.ts'
 import { useDecks } from './data/useDecks.ts'
+import { useRecords } from './data/useRecords.ts'
 import { browserStore, recordScore, type ScoreResult } from './ui/bestScore.ts'
 import { Game } from './ui/Game.tsx'
 import { Loading } from './ui/Loading.tsx'
@@ -28,6 +29,10 @@ export function App() {
   const [result, setResult] = useState<ScoreResult | null>(null)
   /** The player has seen the winning card and asked for the result. */
   const [finished, setFinished] = useState(false)
+  /** The decks of the game in progress let it set the records for everyone. */
+  const [recordsAllowed, setRecordsAllowed] = useState(false)
+  // Fetched the moment the game is won, so they are in by the time the result screen opens.
+  const records = useRecords(apiUrl, session?.game.phase === 'won' ? session.game : null, recordsAllowed)
 
   function changeSettings(next: Settings) {
     setSettings(next)
@@ -42,6 +47,7 @@ export function App() {
     // A new seed for the game after this one, or the same game would be played again.
     setSeed(nextSeed(seed))
     setSession(startSession(setup.cards, setup.options))
+    setRecordsAllowed(setup.recordsAllowed)
     setResult(null)
     setFinished(false)
     window.scrollTo(0, 0)
@@ -75,6 +81,9 @@ export function App() {
       <Result
         game={game}
         result={game.phase === 'won' ? result : null}
+        records={records.state}
+        onClaim={records.claim}
+        onRetryRecords={records.retry}
         onPlayAgain={start}
         onToStart={toStart}
       />

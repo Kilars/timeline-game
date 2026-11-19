@@ -77,12 +77,21 @@ export function stepTarget(settings: Settings, cardCount: number, step: -1 | 1):
   return { ...settings, target: targetFor(settings, cardCount) + step }
 }
 
+/**
+ * Whether a game with these choices can set the records for everyone (ADR 0010): every deck in play
+ * is a public history deck. Whoever made a personal or private deck may know its dates by heart.
+ */
+export function recordsAllowed(decks: readonly Deck[], settings: Settings): boolean {
+  const inPlay = decks.filter((deck) => isTicked(settings, deck) && deck.cards.length > 0)
+  return inPlay.length > 0 && inPlay.every((deck) => deck.kind === 'history' && deck.visibility === 'public')
+}
+
 /** The cards and options for `createGame`, or null when the choices leave too few cards to play. */
 export function gameSetup(
   decks: readonly Deck[],
   settings: Settings,
   seed: number,
-): { cards: Card[]; options: GameOptions } | null {
+): { cards: Card[]; options: GameOptions; recordsAllowed: boolean } | null {
   const cards = cardsInPlay(decks, settings)
   if (!canPlay(cards.length)) return null
   return {
@@ -93,5 +102,6 @@ export function gameSetup(
       precision: settings.precision,
       personalShare: settings.personalPercent / 100,
     },
+    recordsAllowed: recordsAllowed(decks, settings),
   }
 }

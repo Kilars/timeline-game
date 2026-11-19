@@ -42,7 +42,7 @@ export function riggedGame(
   return {
     config: { target: 10, precision: 'year', seed: 1, ...config, personalShare: 0 },
     phase: 'placing',
-    player: { timeline: [{ card: start, locked: true }], turnsUsed: 1 },
+    player: { timeline: [{ card: start, locked: true }], turnsUsed: 1, mostInTurn: 0 },
     drawn: first,
     miss: null,
     piles: { history: rest, personal: [] },

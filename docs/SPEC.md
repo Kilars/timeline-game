@@ -25,6 +25,7 @@ The game belongs to the same family as tabletop timeline games, where you place 
    - **Lock in:** all pending cards become permanent. The turn ends.
 4. **Win.** The game ends as soon as locked plus pending cards reach the target.
 5. **Score.** The number of turns used. Fewer is better. The best score per target is remembered on the device.
+6. **Records for everyone** (ADR 0010). Two records are shared by all players, one pair per target and judging precision: *fewest turns* to win, and *most cards in one turn* (locked in, or pending as the game is won). Only a won game played on public history decks alone can set one, and only by beating it; a tie keeps the old holder.
 
 Details:
 
@@ -41,7 +42,7 @@ Details:
 - **Start screen:** deck ticks, one slider for the share of personal cards against history (default 50%), target, judging precision. The last choice is remembered. No filters in version 1.
 - **Code entry:** hidden behind tapping the title five times, with no feedback until the fifth tap opens one text field. The field is made for pasting a long code. A code reveals every deck it belongs to. The device remembers its codes.
 - **Editor:** appears for decks where the device holds an edit code. Add, change and delete cards.
-- **Result screen:** turns used, personal best, play again with the same settings.
+- **Result screen:** turns used, personal best, the two records for everyone at this target and precision next to this game's own numbers, play again with the same settings. When the game beats a record, the screen asks for a name (remembered on the device) and claims the record when the player saves. With no API there are no records.
 - **Look:** built plain first, with every colour, font and spacing value in one theme file. The visual design comes from a Claude Design handoff (`docs/design-prompt.md`) and is applied in a restyle task.
 - **For agents and tests:** `?seed=<n>` makes the shuffle repeatable, and a bundled fixture deck of fictional and public history cards lets the game run with no backend.
 
@@ -51,6 +52,7 @@ Details:
 - **Card:** belongs to one deck. Title (shown while placing), description (optional, shown with the title while placing and kept after; never gives the date away), reveal line (optional, shown with the date after placing), year, optional month, optional day, source reference.
   - The date is stored as precisely as it is known. Year is a signed integer so dates before year 1 work.
 - **Code:** stored hashed, with a role (`play` or `edit`) and the decks it opens. One master edit code opens everything.
+- **Record:** which record (`fewest_turns` or `most_in_turn`), target, judging precision, value, the holder's name (1 to 20 characters) and when it was set. Nothing about decks or cards.
 - All cards live in the database, history included. Personal cards never enter the git repo.
 - **History deck:** candidates from Wikidata, curated and written in Norwegian by an AI pass. First target is about 1000 cards.
 
@@ -60,6 +62,7 @@ Details:
 - Private decks: never listed until the device presents a code for them. The server checks codes; the client contains no secrets.
 - Play codes let you play a deck. Edit codes also let you change it.
 - Code attempts are rate limited. An admin can replace a leaked code.
+- Anyone can read the records and claim one. The server writes a claim only when it beats the stored record and checks that the numbers are possible; the client is otherwise trusted. Claims are not rate limited. The owner removes a bad record with wrangler.
 
 ## Out of scope for version 1
 
@@ -75,3 +78,4 @@ Lars was not asked about these. Change any of them by saying so.
 - Reaching the target with pending cards wins at once, without a separate lock in.
 - Tap a gap to place; vertical timeline.
 - Client stack: React, TypeScript, Vite, Vitest, Playwright (ADR 0009).
+- Records for everyone (ADR 0010): one pair per target and judging precision; only games on public history decks alone; a tie keeps the old holder; the name is asked for only when a record is beaten, and the record is set only when the player saves.

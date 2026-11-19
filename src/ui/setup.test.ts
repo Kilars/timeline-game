@@ -9,6 +9,7 @@ import {
   gameSetup,
   isTicked,
   mixKind,
+  recordsAllowed,
   stepTarget,
   targetFor,
   toggleDeck,
@@ -141,5 +142,30 @@ describe('game setup', () => {
     const setup = gameSetup(fixtureDecks, DEFAULT_SETTINGS, 1)
     const all = fixtureDecks.flatMap((d) => d.cards)
     expect(createGame(setup?.cards ?? [], setup?.options ?? { seed: 0 })).toEqual(createGame(all, { seed: 1 }))
+  })
+})
+
+describe('records for everyone', () => {
+  it('can be set by a game on public history decks alone', () => {
+    const only = settings({ unticked: ['familie', 'venner'] })
+    expect(recordsAllowed(decks, only)).toBe(true)
+    expect(gameSetup(decks, only, 1)?.recordsAllowed).toBe(true)
+  })
+
+  it('cannot be set when a personal deck is ticked, even at a 0 % share', () => {
+    expect(recordsAllowed(decks, settings())).toBe(false)
+    expect(recordsAllowed(decks, settings({ unticked: ['venner'], personalPercent: 0 }))).toBe(false)
+    expect(gameSetup(decks, settings(), 1)?.recordsAllowed).toBe(false)
+  })
+
+  it('cannot be set on a private history deck', () => {
+    const hidden: Deck = { ...deck('skjult', 'history', 10), visibility: 'private' }
+    expect(recordsAllowed([history, hidden], settings())).toBe(false)
+    expect(recordsAllowed([history, hidden], settings({ unticked: ['skjult'] }))).toBe(true)
+  })
+
+  it('ignores a ticked deck with no cards, and is false with no deck in play', () => {
+    expect(recordsAllowed([history, deck('tom', 'personal', 0)], settings())).toBe(true)
+    expect(recordsAllowed(decks, settings({ unticked: ['historie', 'familie', 'venner'] }))).toBe(false)
   })
 })

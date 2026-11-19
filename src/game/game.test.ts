@@ -484,6 +484,48 @@ describe('drawing', () => {
   })
 })
 
+describe('best turn', () => {
+  test('starts at 0: the start card is dealt, not won', () => {
+    expect(createGame(deck(5), { seed: 1 }).player.mostInTurn).toBe(0)
+  })
+
+  test('counts the cards a lock in secures, and keeps the most', () => {
+    let game = riggedGame(start, [c1950, c1800, c2000, c1850])
+    game = lockIn(placeCard(drawAnother(placeCard(game, 1)), 0)) // Turn 1: two cards.
+    expect(game.player.mostInTurn).toBe(2)
+    game = lockIn(placeCard(game, 3)) // Turn 2: one card.
+    expect(game.player.mostInTurn).toBe(2)
+  })
+
+  test('counts the cards pending when the game is won, the winning card included', () => {
+    let game = riggedGame(start, [c1950, c1800, c2000, c1850, c1925], { target: 5 })
+    game = lockIn(placeCard(game, 1)) // Turn 1: one card.
+    game = drawAnother(placeCard(game, 0)) // Turn 2: 1800, 2000, then 1850 wins.
+    game = drawAnother(placeCard(game, 3))
+    game = placeCard(game, 1)
+    expect(game.phase).toBe('won')
+    expect(game.player.mostInTurn).toBe(3)
+  })
+
+  test('a miss secures nothing and leaves the best turn as it was', () => {
+    let game = riggedGame(start, [c1950, c1800, c2000, c1850, c1925])
+    game = lockIn(placeCard(game, 1)) // Turn 1: one card.
+    game = drawAnother(placeCard(game, 0)) // Turn 2: 1800 and 2000 pending, then a miss.
+    game = drawAnother(placeCard(game, 3))
+    expect(pendingIds(game)).toHaveLength(2)
+    game = placeCard(game, 0)
+    expect(game.phase).toBe('miss')
+    expect(game.player.mostInTurn).toBe(1)
+  })
+
+  test('counts the pending cards locked when the cards run out', () => {
+    let game = riggedGame(start, [c1950, c1800])
+    game = drawAnother(placeCard(drawAnother(placeCard(game, 1)), 0))
+    expect(game.phase).toBe('exhausted')
+    expect(game.player.mostInTurn).toBe(2)
+  })
+})
+
 describe('exhausted', () => {
   test('drawing another with no cards left locks the pending cards and ends the game', () => {
     let game = riggedGame(start, [c1950, c1800])

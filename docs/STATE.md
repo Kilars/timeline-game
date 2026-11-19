@@ -26,7 +26,12 @@ On 2026-11-18, at Lars's request (ideas from 2026-11-17), cards got a descriptio
 
 On 2026-11-19, at Lars's request, the app was restyled to the "Avis, utklipp" look. Lars found the checked tablecloth was not working and picked this look on 2026-11-18 from three alternatives on a second private Design canvas; its link is kept out of this repo. The look is newsprint paper and ink, set in Newsreader and IBM Plex Mono. Cards are clippings on a darker desk, with the year in an ink stamp. Pending cards are yellow with a red "På spill" stamp. Corners are square and shadows are hard offsets. Dark mode is a night edition of the same paper. Only the tokens, the component CSS and the font link changed. The timeline's line and dots are no longer drawn, because the clippings and stamps carry the order.
 
+T10 is done (2026-11-19, at Lars's request): records for everyone, kept in D1 (ADR 0010). Two records per target and judging precision: the fewest turns to win, and the most cards secured in one turn (`Player.mostInTurn` in the rules). `GET /records` and `POST /records` in `api/src/records.ts`; a record is written only when a claim beats it, in one conditional upsert per record, and impossible claims and hidden-character names are refused. The result screen fetches the records as soon as a game is won and shows them beside the game's own numbers; a game on public history decks alone that beats one asks for a name at the top. The device best is now "Ditt beste", so "rekord" means only the shared records. `npm run play -- --api` plays against a local API and screenshots the claim. The design, the plan and the build each had one review; the findings that were left are in `IDEAS.md`. Lars has not seen it yet; the defaults are listed in `SPEC.md`.
+
 Notes for coming tasks:
+
+- T5 rebase: records took migration `0004_records.sql` and left `0003` for `0003_codes.sql`; wrangler applies any migration not yet applied, whatever its number. Append `0004_records.sql` to the list in T5's `schema.test.ts`. CORS (GET and POST) and the global `Cache-Control: no-store` are already as on the T5 branch; T5 adds its codes header. T5's `createApp` takes `now: () => number`, as records does now.
+- T5 or later: claims are not rate limited per client. T5's attempt counter could limit them too (ADR 0010).
 
 - T5: `codes.hash` is a unique lookup hash, so short play codes need a server-side pepper: a Worker secret (`wrangler secret put`), never in the repo.
 - T5: a new migration file is applied to D1 by CI on push; test it locally first.
@@ -56,4 +61,5 @@ T5: codes. Build it in the design (board "6 Code entry", `design-handoff/CodeEnt
 | T6 | Editor: edit codes, add, change and delete cards, create decks | Stories A1 to A4, O1 | Not started |
 | T7 | History import: Wikidata query script, AI curation to about 1000 Norwegian cards, load into the database | Story O5; a sample of 50 cards checked against Wikidata by the reviewer | Not started |
 | T8 | Backend deploy to Cloudflare Workers + D1 (ADR 0007) | The live site plays against the hosted backend from a phone | Waits on Lars's Cloudflare account and yes |
+| T10 | Records for everyone (ADR 0010), brought forward at Lars's request on 2026-11-19 as T8 was: fewest turns and most cards in one turn, per target and precision, kept in the database | Story P16; API tests prove a record is written only when beaten and that impossible claims are refused; `npm run play -- --api` shows the records and a claim | Done 2026-11-19 |
 | T9 | Design check after T6: compare every screen with the handoff's layout and the "Avis, utklipp" look at phone size and 1280, light and dark, and fix what differs | Reviewer finds no differences that matter; gate passes | Not started |

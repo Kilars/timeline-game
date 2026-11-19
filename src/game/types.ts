@@ -54,6 +54,12 @@ export interface Player {
   timeline: TimelineEntry[]
   /** Turns started so far, counting the current one. This is the score when the game is won. */
   turnsUsed: number
+  /**
+   * The most cards secured in one turn so far: locked in, or pending when the game was won or the
+   * cards ran out. Cards lost to a miss do not count. 0 until a turn secures a card; the start card
+   * is dealt, not won.
+   */
+  mostInTurn: number
 }
 
 /** What a UI needs to show a miss. */

@@ -35,6 +35,7 @@
   --tl-type-liten-n: italic 400 16px/21px var(--tl-font-tekst); /* notes under a control */
   --tl-type-spill: 800 30px/34px var(--tl-font-tittel); /* "Spill" on the start screen */
   --tl-type-teller: 700 26px/30px var(--tl-font-mono); /* the target on the start screen */
+  --tl-type-felt: 400 18px/24px var(--tl-font-tekst); /* text typed in a field; 16px or more, or phones zoom */
   --tl-type-runde: 700 24px/28px var(--tl-font-mono); /* the round in the top bar */
   --tl-sperring-knapp: 0.01em; /* "Spill" */
   --tl-sperring: 0.08em; /* small capital labels */

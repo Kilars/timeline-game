@@ -24,11 +24,22 @@ const insertCard = (id: string, year: number, month: number | null, day: number 
 describe('the schema', () => {
   it('applies to an empty database and creates the tables', async () => {
     db = openSqlite(':memory:')
-    expect(await migrate(db, readMigrations())).toEqual(['0001_init.sql', '0002_card_descriptions.sql'])
+    expect(await migrate(db, readMigrations())).toEqual([
+      '0001_init.sql',
+      '0002_card_descriptions.sql',
+      '0004_records.sql',
+    ])
     const tables = await db.all<{ name: string }>(
       `SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name`,
     )
-    expect(tables.map((table) => table.name)).toEqual(['_migrations', 'cards', 'code_decks', 'codes', 'decks'])
+    expect(tables.map((table) => table.name)).toEqual([
+      '_migrations',
+      'cards',
+      'code_decks',
+      'codes',
+      'decks',
+      'records',
+    ])
   })
 
   it('applies each file once', async () => {

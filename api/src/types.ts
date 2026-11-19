@@ -26,3 +26,35 @@ export interface CardJson {
   day?: number
   source?: string
 }
+
+/** A record and its holder (ADR 0010). */
+export interface RecordJson {
+  value: number
+  name: string
+}
+
+/**
+ * GET /records?target=&precision=: `{ records: RecordsJson }`. Null where no game at this target
+ * and precision has set the record yet.
+ */
+export interface RecordsJson {
+  /** The fewest turns used to win. */
+  fewestTurns: RecordJson | null
+  /** The most cards secured in one turn. */
+  mostInTurn: RecordJson | null
+}
+
+/** POST /records: a won game's claim on the records it beats. */
+export interface ClaimJson {
+  target: number
+  precision: 'year' | 'month' | 'day'
+  turns: number
+  mostInTurn: number
+  name: string
+}
+
+/** The answer to POST /records: the records as they now stand, and which of them this claim set. */
+export interface ClaimResultJson {
+  records: RecordsJson
+  set: { fewestTurns: boolean; mostInTurn: boolean }
+}

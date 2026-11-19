@@ -15,14 +15,15 @@ export default defineConfig(
     extends: [reactHooks.configs.flat.recommended, reactRefresh.configs.vite],
     languageOptions: { globals: globals.browser },
     rules: {
-      // The client may take the API's wire types, and nothing else: the API's code runs in Node.
+      // The client may take the API's wire types and the rule for names on records, which both
+      // sides apply, and nothing else: the rest of the API's code runs in Node.
       'no-restricted-imports': [
         'error',
         {
           patterns: [
             {
-              regex: '(^|/)api/(?!src/types\\.ts$)',
-              message: 'The client may import only api/src/types.ts from the API.',
+              regex: '(^|/)api/(?!src/(types|names)\\.ts$)',
+              message: 'The client may import only api/src/types.ts and api/src/names.ts from the API.',
             },
           ],
         },

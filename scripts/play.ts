@@ -2,8 +2,10 @@
 // step to artifacts/play/. Builds the app, serves it, and stops the server again when done.
 // Animations are left to finish before each screenshot.
 //
-//   npm run play            seed 1
-//   npm run play -- 42      seed 42
+//   npm run play                 seed 1, on the bundled fixture decks
+//   npm run play -- 42           seed 42
+//   npm run play -- --api [42]   against an API on this machine (e2e/apiClient.ts): the result
+//                                screen then shows the records for everyone, and the game claims them
 //
 // Exits with a non-zero code if anything fails, including errors logged by the page.
 
@@ -11,6 +13,7 @@ import { mkdir, rm } from 'node:fs/promises'
 import path from 'node:path'
 import { chromium, expect, type Page } from '@playwright/test'
 import { build, preview } from 'vite'
+import { serveApiAndClient } from '../e2e/apiClient.ts'
 import {
   cardInHand,
   chooseGap,
@@ -32,9 +35,10 @@ import { browser as browserOptions, phone } from '../e2e/phone.ts'
 const root = path.resolve(import.meta.dirname, '..')
 const outDir = path.join(root, 'artifacts', 'play')
 const port = 4174
+const apiPort = 4177
 
-/** Saves a screenshot of the current screen as `<nn>-<name>.png`. */
-type Shot = (name: string) => Promise<void>
+/** Saves a screenshot of the current screen, or the whole page, as `<nn>-<name>.png`. */
+type Shot = (name: string, options?: { fullPage?: boolean }) => Promise<void>
 
 /**
  * Starts on the start screen with the default settings and plays one full game to a win, the way a
@@ -126,32 +130,70 @@ async function play(page: Page, shot: Shot): Promise<void> {
   console.log(`Won in ${turns} turns, with ${lostToTheMiss} card lost to a miss on purpose`)
 }
 
-function readSeed(args: string[]): number {
-  const arg = args[0]
-  if (arg === undefined) return 1
+/** The seed and whether to play against the API, from the arguments in any order. */
+function readArgs(args: string[]): { seed: number; api: boolean } {
+  const api = args.includes('--api')
+  const rest = args.filter((arg) => arg !== '--api')
+  const [arg] = rest
+  if (rest.length > 1) throw new Error(`Unknown arguments: ${rest.join(' ')}. Usage: npm run play -- [--api] [seed]`)
+  if (arg === undefined) return { seed: 1, api }
   const value = arg.replace(/^--seed=/, '')
   if (!/^\d+$/.test(value)) {
-    throw new Error(`The seed must be a whole number, got "${arg}". Usage: npm run play -- <seed>`)
+    throw new Error(`The seed must be a whole number, got "${arg}". Usage: npm run play -- [--api] [seed]`)
   }
-  return Number(value)
+  return { seed: Number(value), api }
 }
 
-async function main(): Promise<void> {
-  const seed = readSeed(process.argv.slice(2))
+/**
+ * On the result screen of a game played against the API: the records for everyone, the claim, the
+ * saved claim, the screen at 360×640 and in dark mode. Whole-page shots, since the records are below
+ * the fold on a phone.
+ */
+async function claimRecords(page: Page, shot: Shot): Promise<void> {
+  await expect(page.getByText('To nye rekorder for alle!')).toBeVisible()
+  await shot('rekord-slatt', { fullPage: true })
+  await page.getByLabel('Navnet ditt').fill('Testesen')
+  await page.getByRole('button', { name: 'Lagre' }).click()
+  await expect(page.getByText('Rekordene er dine.')).toBeVisible()
+  await shot('rekord-lagret', { fullPage: true })
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await shot('rekord-lagret-mork', { fullPage: true })
+  await page.emulateMedia({ colorScheme: 'light' })
+  await page.setViewportSize({ width: 360, height: 640 })
+  await shot('rekord-lagret-360')
+  await shot('rekord-lagret-360-hel', { fullPage: true })
+}
 
-  await rm(outDir, { recursive: true, force: true })
-  await mkdir(outDir, { recursive: true })
-
+/** The built client, served: on its own, or with the API on this machine. */
+async function serve(api: boolean): Promise<{ baseURL: string; close: () => Promise<void> }> {
+  if (api) {
+    const served = await serveApiAndClient({ api: apiPort, client: port })
+    return { baseURL: served.clientUrl, close: served.close }
+  }
   await build({ root, logLevel: 'warn' })
   const server = await preview({
     root,
     logLevel: 'warn',
     preview: { host: '127.0.0.1', port, strictPort: true },
   })
+  const baseURL = server.resolvedUrls?.local[0]
+  if (!baseURL) {
+    await server.close()
+    throw new Error('The preview server did not report a URL')
+  }
+  return { baseURL, close: () => server.close() }
+}
+
+async function main(): Promise<void> {
+  const { seed, api } = readArgs(process.argv.slice(2))
+
+  await rm(outDir, { recursive: true, force: true })
+  await mkdir(outDir, { recursive: true })
+
+  const server = await serve(api)
   let browser
   try {
-    const baseURL = server.resolvedUrls?.local[0]
-    if (!baseURL) throw new Error('The preview server did not report a URL')
+    const { baseURL } = server
 
     browser = await chromium.launch({ ...browserOptions, headless: true })
     const context = await browser.newContext(phone)
@@ -165,11 +207,11 @@ async function main(): Promise<void> {
     })
 
     let step = 0
-    const shot: Shot = async (name) => {
+    const shot: Shot = async (name, options = {}) => {
       step += 1
       const file = path.join(outDir, `${String(step).padStart(2, '0')}-${name}.png`)
       await settle(page)
-      await page.screenshot({ path: file })
+      await page.screenshot({ path: file, fullPage: options.fullPage ?? false })
       console.log(path.relative(root, file))
     }
 
@@ -177,6 +219,7 @@ async function main(): Promise<void> {
     console.log(`Playing ${url}`)
     await page.goto(url)
     await play(page, shot)
+    if (api) await claimRecords(page, shot)
 
     if (pageErrors.length > 0) {
       throw new Error(`The page logged errors:\n${pageErrors.join('\n')}`)

@@ -168,6 +168,26 @@ export async function nextTurn(page: Page): Promise<Outcome> {
   return outcome(page)
 }
 
+/**
+ * Places every card correctly until the game ends. After each correct card, `push` says whether to
+ * draw another (given the cards pending this turn) or to lock in. Returns how the game ended.
+ */
+export async function playToTheEnd(page: Page, push: (pending: number) => boolean): Promise<Outcome> {
+  let pending = 0
+  for (let step = 0; step < 60; step++) {
+    const { outcome } = await placeCorrectly(page)
+    if (outcome !== 'deciding') return outcome
+    pending += 1
+    if (push(pending)) {
+      await drawAnother(page)
+    } else {
+      if ((await lockIn(page)) !== 'placing') throw new Error('No new turn after locking in')
+      pending = 0
+    }
+  }
+  throw new Error('The game did not end')
+}
+
 /** Waits until the fonts are in and every animation and transition has run to its end. */
 export async function settle(page: Page): Promise<void> {
   await page.evaluate(async () => {

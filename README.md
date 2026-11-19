@@ -13,6 +13,7 @@ npm run dev          # dev server at http://localhost:5173/timeline-game/
 npm run check        # the gate: type check, lint, unit tests, end-to-end tests
 npm run play         # plays one full game in headless Chrome at phone size, seed 1
 npm run play -- 42   # the same with seed 42
+npm run play -- --api   # the same against an API on this machine, with the records for everyone
 ```
 
 The app opens on the start screen. Built without an API address, as above, it plays the bundled
@@ -23,12 +24,16 @@ hosted API (see below).
   Without it a seed is picked by chance, and "Spill igjen" always picks a new one.
 - The best score per target is kept in the browser's localStorage under `tidslinje:rekord`.
   The game also works when storage is blocked; the best score then lasts until the page is closed.
+- The name last put on a record for everyone is kept under `tidslinje:navn`.
 
 `npm run play` plays a seeded game to a win and saves a numbered screenshot of every step to
 `artifacts/play/`, after the animations have finished. The game it plays has a turn with several
 cards, a miss on purpose that loses a pending card, and the result screen. It finds the right gap
 the way the end-to-end tests do (`e2e/helpers.ts`): it reads the cards on screen, looks them up in
-the fixture deck and asks the rules. The app has no debug hook.
+the fixture deck and asks the rules. The app has no debug hook. With `--api` it serves the API over
+an in-memory database seeded from the fixture (`e2e/apiClient.ts`), builds the client against it,
+and after the game claims both records as "Testesen", with whole-page shots in light and dark and
+at 360×640.
 
 ## Run against the API
 
@@ -51,7 +56,15 @@ decks when it is not. A production build against the local API:
   null. An unknown deck and a private one both get 404 `{ "error": "not_found" }`.
 - Private decks are never returned. Codes that open them come in T5. The fixture family deck is
   private, so it is seeded but not served.
-- The API is read only. The schema is in `api/migrations/` and is applied on start and on seed.
+- `GET /records?target=10&precision=year` gives the records for everyone at a target and judging
+  precision (ADR 0010): `{ records: { fewestTurns: { value, name } | null, mostInTurn: … } }`.
+- `POST /records` with a JSON body `{ target, precision, turns, mostInTurn, name }` claims the
+  records a won game beats. It answers `{ records, set: { fewestTurns, mostInTurn } }`, where `set`
+  says which records this claim wrote. A record is written only when the claim beats it; a tie
+  keeps the holder. A claim that could not be a real game, or a name that is blank, over 20
+  characters or holds hidden characters, gets 400; a body that is not JSON 415; over 1 KB 413.
+- Decks are read only; records are the only thing a player writes. The schema is in
+  `api/migrations/` and is applied on start and on seed. Every answer is `Cache-Control: no-store`.
 - Settings: `API_PORT` (8787), `API_HOST` (127.0.0.1), `API_DB` (`api/local.sqlite`) and
   `API_ORIGINS`, a comma-separated list of web origins allowed to call it. The default allows
   `https://kilars.github.io` and the local client on ports 5173 and 4173.
@@ -72,6 +85,20 @@ npx wrangler@4.156.0 d1 migrations apply tidslinje --remote   # the schema
 npm run -s api:seed-sql > seed.sql                              # the public fixture decks as SQL
 npx wrangler@4.156.0 d1 execute tidslinje --remote --file seed.sql
 npx wrangler@4.156.0 deploy                                     # the Worker
+```
+
+## Records
+
+Anyone can claim a record, so a rude name or a made-up claim may need removing (ADR 0010). With
+the Cloudflare secrets set in the environment:
+
+```sh
+# Every record, newest first
+npx wrangler@4.156.0 d1 execute tidslinje --remote --command \
+  "SELECT kind, target, precision, value, name, set_at FROM records ORDER BY set_at DESC"
+# Remove one; the next game that beats nothing at that target and precision can claim it again
+npx wrangler@4.156.0 d1 execute tidslinje --remote --command \
+  "DELETE FROM records WHERE kind = 'fewest_turns' AND target = 10 AND precision = 'year'"
 ```
 
 ## History deck
@@ -107,12 +134,14 @@ the date away.
     (dates, best score, seed, the session on top of the rules).
   - `src/theme.css` holds every colour, font, size, spacing, radius, shadow and timing as a
     `--tl-*` variable, light and dark. The component styles in `src/ui/*.css` use only those.
-  - `src/data/` reads the decks from the API and checks what comes back.
+  - `src/data/` reads the decks and the records from the API, claims records, and checks what
+    comes back.
 - `api/` is the API: a [Hono](https://hono.dev) app (`api/src/app.ts`) over a small database
   interface (`api/src/db.ts`), so the same app can run on Node now and on a hosted runtime later
   (ADR 0007). `api/src/sqlite.ts` implements the interface with `node:sqlite`. Its tests are in
   `api/src/` and run with the unit tests.
 - `e2e/` holds the end-to-end tests and their helpers, `scripts/` the play script. `e2e/api.spec.ts`
-  starts the API over a seeded in-memory database, builds the client against it and plays a game.
+  starts the API over a seeded in-memory database, builds the client against it (`e2e/apiClient.ts`)
+  and plays games, the records for everyone included.
 - `docs/` holds the spec (`SPEC.md`), the current state (`STATE.md`), how work is done
   (`WORKFLOW.md`) and the decisions (`adr/`).

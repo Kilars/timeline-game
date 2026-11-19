@@ -182,14 +182,19 @@ describe('CORS', () => {
     expect(response.headers.get('access-control-allow-origin')).toBeNull()
   })
 
-  it('answers a preflight from an allowed origin, for GET only', async () => {
+  it('answers a preflight from an allowed origin, for GET and POST and a JSON body', async () => {
     const response = await (await api()).request('/decks', {
       method: 'OPTIONS',
-      headers: { Origin: testOrigin, 'Access-Control-Request-Method': 'GET' },
+      headers: {
+        Origin: testOrigin,
+        'Access-Control-Request-Method': 'GET',
+        'Access-Control-Request-Headers': 'content-type',
+      },
     })
     expect(response.status).toBe(204)
     expect(response.headers.get('access-control-allow-origin')).toBe(testOrigin)
-    expect(response.headers.get('access-control-allow-methods')).toBe('GET')
+    expect(response.headers.get('access-control-allow-methods')).toBe('GET,POST')
+    expect(response.headers.get('access-control-allow-headers')).toBe('Content-Type')
   })
 })
 

@@ -14,7 +14,7 @@ Every function takes plain data and returns a new `GameState`; an action that is
 `GameState` (see `types.ts`) is JSON-safe. `Card` is `{ id, title, reveal?, year, month?, day?, pool: 'history' | 'personal' }`; the caller sets `pool` from the card's deck.
 
 - `phase`: `'placing' | 'deciding' | 'miss' | 'won' | 'exhausted'`.
-- `player`: `{ timeline: { card, locked }[], turnsUsed }`, oldest first. `locked: false` means pending.
+- `player`: `{ timeline: { card, locked }[], turnsUsed, mostInTurn }`, oldest first. `locked: false` means pending. `mostInTurn` is the most cards secured in one turn: locked in, or pending when the game was won or the cards ran out; a miss secures none.
 - `drawn`: the card to place, only in `placing`. Show only its title until it is placed.
 - `miss`: only in `miss`: `{ card, chosenGap, correctGaps, lostCards, timeline }`. `timeline` is the line as it was when the card was placed; `player.timeline` has already lost the pending cards.
 - `config`, `piles` (undrawn cards per pool), `discarded` (cards lost to misses), `rng` (generator state).
