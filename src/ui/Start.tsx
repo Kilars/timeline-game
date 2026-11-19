@@ -2,6 +2,7 @@ import { useId } from 'react'
 import type { Precision } from '../game/index.ts'
 import { LogoMark, MinusIcon, PlusIcon } from './icons.tsx'
 import type { Settings } from './settings.ts'
+import type { ThemeChoice } from './theme.ts'
 import {
   canPlay,
   canStepTarget,
@@ -21,8 +22,17 @@ interface StartProps {
   decks: readonly Deck[]
   settings: Settings
   onChange: (next: Settings) => void
+  /** Light, dark, or as the device is. Kept apart from the game settings (src/ui/theme.ts). */
+  theme: ThemeChoice
+  onThemeChange: (next: ThemeChoice) => void
   onStart: () => void
 }
+
+const THEMES: { value: ThemeChoice; label: string }[] = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'lys', label: 'Lys' },
+  { value: 'mork', label: 'Mørk' },
+]
 
 const PRECISIONS: { value: Precision; label: string }[] = [
   { value: 'year', label: 'År' },
@@ -31,7 +41,7 @@ const PRECISIONS: { value: Precision; label: string }[] = [
 ]
 
 /** The start screen: which decks, how much of each kind, how many cards to win, how strict. */
-export function Start({ decks, settings, onChange, onStart }: StartProps) {
+export function Start({ decks, settings, onChange, theme, onThemeChange, onStart }: StartProps) {
   const id = useId()
   const cardCount = cardsInPlay(decks, settings).length
   const playable = canPlay(cardCount)
@@ -143,6 +153,26 @@ export function Start({ decks, settings, onChange, onStart }: StartProps) {
           ))}
         </div>
         <p className="tl-start__merknad">{precisionNote(settings.precision)}</p>
+      </section>
+
+      <section className="tl-start__del">
+        <h2 id={`${id}-utseende`} className="tl-etikett">
+          Utseende
+        </h2>
+        <div role="group" aria-labelledby={`${id}-utseende`} className="tl-presisjon">
+          {THEMES.map(({ value, label }) => (
+            <button
+              key={value}
+              type="button"
+              className="tl-presisjon__knapp"
+              aria-pressed={theme === value}
+              onClick={() => onThemeChange(value)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {theme === 'auto' && <p className="tl-start__merknad">Lys eller mørk, som på enheten.</p>}
       </section>
 
       <div className="tl-start__spill">

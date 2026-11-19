@@ -4,7 +4,8 @@
   the year in an ink stamp; what is at risk is yellow, with a red "På spill" stamp.
   Component styles (src/ui/*.css) use only these variables.
   The fonts are loaded by the Google Fonts tag in index.html.
-  Dark mode follows the device: one prefers-color-scheme block overrides the colours and shadows.
+  Dark mode follows the device, or the player's choice on the start screen: the night edition
+  overrides the colours and shadows (see the end of this file).
 */
 
 :root {
@@ -173,9 +174,11 @@
   --tl-ease-sprett: cubic-bezier(0.34, 1.56, 0.64, 1); /* lock icon only */
 }
 
+/* The night edition: ink-black paper, the same yellow and red. On a dark device unless the player
+   chose "Lys" on the start screen, and always when they chose "Mørk" (src/ui/theme.ts). The two
+   blocks must hold the same values; src/ui/theme.test.ts checks that they do. */
 @media (prefers-color-scheme: dark) {
-  /* The night edition: ink-black paper, the same yellow and red. */
-  :root {
+  :root:not([data-tema='lys']) {
     --tl-bord: #151412;
     --tl-pult: #0c0b0a;
     --tl-papir: #24221e;
@@ -200,4 +203,38 @@
     --tl-skygge-hand: 5px 5px 0 #3e3a33;
     --tl-skygge-brett: none;
   }
+}
+
+:root[data-tema='mork'] {
+  --tl-bord: #151412;
+  --tl-pult: #0c0b0a;
+  --tl-papir: #24221e;
+  --tl-flate: #1d1b18;
+  --tl-blekk: #ede7da;
+  --tl-blekk-2: #aca595;
+  --tl-linje: #46413a;
+  --tl-kant: #8a8274;
+  --tl-kant-kort: #625b50;
+  --tl-last: #ede7da;
+  --tl-pa-last: #151412;
+  --tl-spill: #e8cc2a;
+  --tl-pa-spill: #151412;
+  --tl-spill-flate: #e8cc2a;
+  --tl-spill-tekst: #a8231a;
+  --tl-tapt: #9a9384;
+  --tl-tapt-flate: #1f1d1a;
+  --tl-fokus: #8db2ee;
+
+  --tl-skygge-flat: 2px 2px 0 #3e3a33;
+  --tl-skygge-loftet: 4px 4px 0 #3e3a33;
+  --tl-skygge-hand: 5px 5px 0 #3e3a33;
+  --tl-skygge-brett: none;
+}
+
+:root[data-tema='lys'] {
+  color-scheme: light;
+}
+
+:root[data-tema='mork'] {
+  color-scheme: dark;
 }

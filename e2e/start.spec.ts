@@ -305,3 +305,51 @@ test('on a small phone nothing scrolls sideways and "Spill" is on screen without
   await expect(handCard(page)).toBeVisible()
   expect(await sideways()).toBe(false)
 })
+
+test.describe('light or dark', () => {
+  const light = 'rgb(243, 239, 229)' // --tl-bord in the day edition
+  const dark = 'rgb(21, 20, 18)' // --tl-bord in the night edition
+  const themeButton = (page: Page, name: 'Auto' | 'Lys' | 'Mørk') =>
+    page.getByRole('group', { name: 'Utseende' }).getByRole('button', { name })
+  const background = (page: Page) => page.evaluate(() => getComputedStyle(document.body).backgroundColor)
+
+  test('follows the device on "Auto", the first choice', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('./?seed=1')
+    await expect(themeButton(page, 'Auto')).toHaveAttribute('aria-pressed', 'true')
+    await expect(page.getByText('Lys eller mørk, som på enheten.')).toBeVisible()
+    expect(await background(page)).toBe(dark)
+    await page.emulateMedia({ colorScheme: 'light' })
+    expect(await background(page)).toBe(light)
+  })
+
+  test('"Lys" and "Mørk" hold whatever the device says, and are remembered', async ({ page }) => {
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('./?seed=1')
+    await themeButton(page, 'Lys').click()
+    await expect(themeButton(page, 'Lys')).toHaveAttribute('aria-pressed', 'true')
+    expect(await background(page)).toBe(light)
+
+    await page.emulateMedia({ colorScheme: 'light' })
+    await themeButton(page, 'Mørk').click()
+    expect(await background(page)).toBe(dark)
+
+    // Set before the first paint on the next visit, and kept in the game.
+    await page.reload()
+    await expect(page.locator('html')).toHaveAttribute('data-tema', 'mork')
+    await expect(themeButton(page, 'Mørk')).toHaveAttribute('aria-pressed', 'true')
+    expect(await background(page)).toBe(dark)
+    await startGame(page)
+    expect(await background(page)).toBe(dark)
+  })
+
+  test('"Auto" again follows the device', async ({ page }) => {
+    await page.addInitScript(() => window.localStorage.setItem('tidslinje:tema', 'lys'))
+    await page.emulateMedia({ colorScheme: 'dark' })
+    await page.goto('./?seed=1')
+    expect(await background(page)).toBe(light)
+    await themeButton(page, 'Auto').click()
+    await expect(page.locator('html')).not.toHaveAttribute('data-tema')
+    expect(await background(page)).toBe(dark)
+  })
+})

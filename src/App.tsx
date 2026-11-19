@@ -10,6 +10,7 @@ import { nextSeed, randomSeed, seedFromSearch } from './ui/seed.ts'
 import { startSession, type Session } from './ui/session.ts'
 import { loadSettings, saveSettings, type Settings } from './ui/settings.ts'
 import { gameSetup } from './ui/setup.ts'
+import { applyTheme, loadTheme, saveTheme, type ThemeChoice } from './ui/theme.ts'
 import { Start } from './ui/Start.tsx'
 
 /** The API the decks come from, set at build time. Without one, the bundled fixture decks are played. */
@@ -22,6 +23,8 @@ const apiUrl = apiUrlFrom(import.meta.env.VITE_API_URL)
 export function App() {
   const { state: decksState, retry } = useDecks(apiUrl)
   const [settings, setSettings] = useState(() => loadSettings(browserStore()))
+  /** Set on the page before the first paint by index.html; changed here. */
+  const [theme, setTheme] = useState(() => loadTheme(browserStore()))
   /** The seed of the next game. */
   const [seed, setSeed] = useState(() => seedFromSearch(window.location.search) ?? randomSeed())
   /** The game in progress or just ended. Null on the start screen. */
@@ -37,6 +40,12 @@ export function App() {
   function changeSettings(next: Settings) {
     setSettings(next)
     saveSettings(browserStore(), next)
+  }
+
+  function changeTheme(next: ThemeChoice) {
+    setTheme(next)
+    saveTheme(browserStore(), next)
+    applyTheme(next)
   }
 
   /** Starts a game with the current settings. Also "Spill igjen": the settings are the same. */
@@ -64,7 +73,16 @@ export function App() {
     if (decksState.status !== 'ready') {
       return <Loading failed={decksState.status === 'failed'} onRetry={retry} />
     }
-    return <Start decks={decksState.decks} settings={settings} onChange={changeSettings} onStart={start} />
+    return (
+      <Start
+        decks={decksState.decks}
+        settings={settings}
+        onChange={changeSettings}
+        theme={theme}
+        onThemeChange={changeTheme}
+        onStart={start}
+      />
+    )
   }
 
   const { game } = session

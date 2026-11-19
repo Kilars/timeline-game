@@ -10,6 +10,15 @@
       rel="stylesheet"
     />
     <title>Tidslinje</title>
+    <script>
+      // Light or dark as chosen on the start screen, set before the first paint (src/ui/theme.ts).
+      try {
+        const tema = localStorage.getItem('tidslinje:tema')
+        if (tema === 'lys' || tema === 'mork') document.documentElement.dataset.tema = tema
+      } catch (error) {
+        // Blocked storage: the look follows the device.
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

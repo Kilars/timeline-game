@@ -39,7 +39,7 @@ Details:
 
 - Norwegian only, phone first. Works on a laptop too.
 - Vertical timeline, oldest at the top. Place by tapping a gap, then confirm. No drag and drop in version 1.
-- **Start screen:** deck ticks, one slider for the share of personal cards against history (default 50%), target, judging precision. The last choice is remembered. No filters in version 1.
+- **Start screen:** deck ticks, one slider for the share of personal cards against history (default 50%), target, judging precision, and the look: Auto (light or dark as the device is, the default), Lys or Mørk (Lars, 2026-11-19). The last choice is remembered. No filters in version 1.
 - **Code entry:** hidden behind tapping the title five times, with no feedback until the fifth tap opens one text field. The field is made for pasting a long code. A code reveals every deck it belongs to. The device remembers its codes.
 - **Editor:** appears for decks where the device holds an edit code. Add, change and delete cards.
 - **Result screen:** turns used, personal best, the two records for everyone at this target and precision next to this game's own numbers, play again with the same settings. When the game beats a record, the screen asks for a name (remembered on the device) and claims the record when the player saves. With no API there are no records.

@@ -228,7 +228,7 @@
   text-align: center;
 }
 
-/* Judging precision: three segments */
+/* Judging precision, and light or dark: three segments each */
 .tl-presisjon {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

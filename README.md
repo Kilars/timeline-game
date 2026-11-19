@@ -25,6 +25,10 @@ hosted API (see below).
 - The best score per target is kept in the browser's localStorage under `tidslinje:rekord`.
   The game also works when storage is blocked; the best score then lasts until the page is closed.
 - The name last put on a record for everyone is kept under `tidslinje:navn`.
+- Light or dark ("Utseende" on the start screen) is kept under `tidslinje:tema`: `lys`, `mork`, or
+  nothing for Auto, which follows the device. A script in `index.html` sets it on the page before
+  the first paint; `src/theme.css` holds the night edition twice, for a dark device and for "Mørk",
+  and `src/ui/theme.test.ts` checks the two are the same.
 
 `npm run play` plays a seeded game to a win and saves a numbered screenshot of every step to
 `artifacts/play/`, after the animations have finished. The game it plays has a turn with several

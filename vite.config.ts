@@ -11,5 +11,7 @@ export default defineConfig({
     include: ['src/**/*.test.{ts,tsx}', 'api/**/*.test.ts'],
     // The API tests use Node's built-in SQLite, which warns on every run that it is experimental.
     execArgv: ['--disable-warning=ExperimentalWarning'],
+    // CSS is blanked in tests, but src/ui/theme.test.ts reads the theme to check its dark blocks.
+    css: { include: [/src\/theme\.css/] },
   },
 })

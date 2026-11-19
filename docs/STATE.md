@@ -28,6 +28,8 @@ On 2026-11-19, at Lars's request, the app was restyled to the "Avis, utklipp" lo
 
 T10 is done (2026-11-19, at Lars's request): records for everyone, kept in D1 (ADR 0010). Two records per target and judging precision: the fewest turns to win, and the most cards secured in one turn (`Player.mostInTurn` in the rules). `GET /records` and `POST /records` in `api/src/records.ts`; a record is written only when a claim beats it, in one conditional upsert per record, and impossible claims and hidden-character names are refused. The result screen fetches the records as soon as a game is won and shows them beside the game's own numbers; a game on public history decks alone that beats one asks for a name at the top. The device best is now "Ditt beste", so "rekord" means only the shared records. `npm run play -- --api` plays against a local API and screenshots the claim. The design, the plan and the build each had one review; the findings that were left are in `IDEAS.md`. Lars has not seen it yet; the defaults are listed in `SPEC.md`.
 
+On 2026-11-19 Lars asked how to get light mode, and chose a switch: "Utseende" on the start screen offers Auto (follows the device, as before), Lys and Mørk, remembered on the device (`src/ui/theme.ts`).
+
 Notes for coming tasks:
 
 - T5 rebase: records took migration `0004_records.sql` and left `0003` for `0003_codes.sql`; wrangler applies any migration not yet applied, whatever its number. Append `0004_records.sql` to the list in T5's `schema.test.ts`. CORS (GET and POST) and the global `Cache-Control: no-store` are already as on the T5 branch; T5 adds its codes header. T5's `createApp` takes `now: () => number`, as records does now.

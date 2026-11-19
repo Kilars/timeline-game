@@ -43,3 +43,4 @@ Parked features and suggestions. Nothing here is built until Lars moves it to th
 | Key the device best by judging precision too | T10 design review | As the shared records are; see the T3 row above |
 | Keep the place of the claim box while the records load | T10 review | When the fetch is slow, the box appears above the score and pushes "Spill igjen" down |
 | Joiners in names for scripts that need them (ZWNJ) | T10 review | Refused now, since a joiner between letters is invisible and would let one name pass for another; only emoji may hold a joiner |
+| Make the night edition feel like paper | Lars, 2026-11-19 | Dark mode loses the newsprint feel; parked, the Lys/Mørk switch is enough for now |
