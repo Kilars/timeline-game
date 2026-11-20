@@ -2210,8 +2210,8 @@ export const MILESTONES: readonly Milestone[] = [
     property: 'P585',
     date: '1906-04-18',
     type: 'hendelse',
-    title: 'Jordskjelvet i San Francisco',
-    description: 'Et kraftig jordskjelv og brannene etterpå legger store deler av byen i ruiner.',
+    title: 'Det store jordskjelvet i San Francisco',
+    description: 'Et kraftig jordskjelv og brannene etterpå legger store deler av trebyen i ruiner. Forfatteren Jack London skriver om det som reporter.',
     article: 'Jordskjelvet i San Francisco 1906',
   },
   {
@@ -2441,7 +2441,7 @@ export const MILESTONES: readonly Milestone[] = [
     property: 'P580',
     date: '1848',
     type: 'hendelse',
-    title: 'Gullrushet i California begynner',
+    title: 'Gull blir funnet i California',
     description: 'Det blir funnet gull ved et sagbruk, og hundretusener reiser vestover for å bli rike.',
     article: 'Gullfeberen i California',
   },
@@ -2676,5 +2676,63 @@ export const MILESTONES: readonly Milestone[] = [
     title: 'Unabomberen blir arrestert',
     description: 'Etter nesten tjue år med brevbomber finner FBI matematikeren Ted Kaczynski i en hytte i Montana, etter et tips fra broren.',
     article: 'Ted Kaczynski',
+  },
+  // Round 1 of the card loop (docs/CARDS.md), 2026-11-20: everyday life, food and women's history,
+  // which the playtest found thin. Each checked against Wikidata and the Norwegian Wikipedia intro.
+  {
+    // Wikidata dates the oil crisis to 1973; the Norwegian ban on driving at weekends began on
+    // 5 December 1973 (Wikipedia, "Oljekrisen").
+    qid: 'Q316817',
+    date: '1973-12-05',
+    type: 'hendelse',
+    title: 'Bilfrie søndager i Norge',
+    description: 'Oljekrisen gjør bensinen knapp, og det blir forbudt å kjøre privatbil i helgene. Folk går på ski og sykler midt i veien.',
+    article: 'Oljekrisen',
+  },
+  {
+    qid: 'Q932080',
+    property: 'P571',
+    date: '1937',
+    type: 'oppfinnelse',
+    title: 'Kvikk Lunsj kommer i butikkene',
+    description: 'Freia lager en sjokolade med kjeks inni, og den blir turmat for hele landet.',
+    article: 'Kvikk Lunsj',
+  },
+  {
+    qid: 'Q969648',
+    property: 'P571',
+    date: '1980-02-11',
+    type: 'oppfinnelse',
+    title: 'Grandiosa kommer i butikkene',
+    description: 'En frossenpizza fra Nora blir fredagsmat for hele Norge.',
+    article: 'Grandiosa',
+  },
+  {
+    // Applied for in Germany in 1899 and granted on 6 June 1901, with an American patent the same
+    // year. His clip was never made, and he did not invent the paper clip people use (Wikipedia).
+    qid: 'Q493139',
+    date: '1901-06-06',
+    type: 'oppfinnelse',
+    title: 'Johan Vaaler får patent på en papirklemme',
+    description: 'En nordmann får tysk og amerikansk patent på en papirklemme av ståltråd. Den blir aldri laget, men mange tror senere at han fant opp bindersen.',
+    article: 'Johan Vaaler',
+  },
+  {
+    qid: 'Q854862',
+    property: 'P571',
+    date: '1981',
+    type: 'oppfinnelse',
+    title: 'Mobilnettet NMT åpner i Norge',
+    description: 'Det nordiske mobiltelefonnettet åpner, og de første mobiltelefonene er så store at de monteres i bilen.',
+    article: 'Nordisk mobiltelefonsystem (NMT)',
+  },
+  {
+    // Her first meeting in the Storting, on 17 March 1911 (Wikipedia; Wikidata has no date).
+    qid: 'Q1769271',
+    date: '1911-03-17',
+    type: 'hendelse',
+    title: 'Anna Rogstad blir første kvinne på Stortinget',
+    description: 'En lærerinne fra Kristiania møter som vararepresentant, før kvinner har fått allmenn stemmerett.',
+    article: 'Anna Rogstad',
   },
 ]

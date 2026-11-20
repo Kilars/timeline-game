@@ -31,16 +31,21 @@ covered here.
    Stalin). Timeline has almost none.
 4. **Local first, with a world canon.** Norwegian history and culture are the local edition; the
    few world events everyone knows are the canon (Hitster).
-5. **A spread over time.** No era should crowd out the others, though the last 150 years will
+5. **Plain titles.** The title says what happened in everyday words. "Norge og Sverige blir enige
+   om å skilles" works; "Karlstadkonvensjonen" does not.
+6. **One card per war, little war in all.** Only the two world wars get both a start and an end
+   card. Organisations being founded go in only when everyone knows them (NATO, the UN). War and
+   violence stay under 15 % of the deck, keeping the best known. (Rules 5 and 6 came from round 1.)
+7. **A spread over time.** No era should crowd out the others, though the last 150 years will
    always have the most cards people know.
-6. **Something to talk about.** The best cards make players argue or laugh when they are revealed.
+8. **Something to talk about.** The best cards make players argue or laugh when they are revealed.
    A correct but dull card (a minor treaty, a renamed organisation) wastes a turn.
-7. **Never give the year away.** The title and description never name the year, its decade or
+9. **Never give the year away.** The title and description never name the year, its decade or
    anything that fixes it, such as "the first Olympics after the war". This is already enforced by
    `api/src/history-content.test.ts`.
 
-The playtest's flags check rules 1, 2, 3, 6 and 7 card by card; its report checks rules 3 to 5
-across the whole deck.
+The playtest's flags check rules 1, 2, 3, 5, 8 and 9 card by card; its report checks rules 3, 4, 6
+and 7 across the whole deck.
 
 ## The loop
 
