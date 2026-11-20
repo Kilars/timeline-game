@@ -1,6 +1,6 @@
 # State
 
-Updated: 2026-11-19
+Updated: 2026-11-20
 
 ## Current state
 
@@ -30,6 +30,8 @@ T10 is done (2026-11-19, at Lars's request): records for everyone, kept in D1 (A
 
 On 2026-11-19 Lars asked how to get light mode, and chose a switch: "Utseende" on the start screen offers Auto (follows the device, as before), Lys and Mørk, remembered on the device (`src/ui/theme.ts`).
 
+On 2026-11-20 the history deck built on 2026-11-18 was loaded into the hosted database at Lars's yes: 727 cards, all with descriptions, 11 deaths (it had still been the 670 cards without descriptions and with about 140 deaths). The same day a loop for improving the cards was set up (`docs/CARDS.md`): a blind playtest by an agent (`scripts/playtest.ts`), a report, suggested changes that Lars keeps or rejects on a private review page (its link is kept out of this repo), then the changes go into the curation files and the deck is loaded again. Round 1 played 120 cards. Organisations being founded, wars with both a start and an end card (43 of them), Norwegian battles, titles in specialist words and local accidents with no clue to the era were the weakest; about 29 % of the deck is war. The model placed 98 % right, so the share placed right is no measure; the flags are. Round 1's 49 suggestions wait on Lars.
+
 Notes for coming tasks:
 
 - T5 rebase: records took migration `0004_records.sql` and left `0003` for `0003_codes.sql`; wrangler applies any migration not yet applied, whatever its number. Append `0004_records.sql` to the list in T5's `schema.test.ts`. CORS (GET and POST) and the global `Cache-Control: no-store` are already as on the T5 branch; T5 adds its codes header. T5's `createApp` takes `now: () => number`, as records does now.
@@ -48,7 +50,9 @@ Notes for coming tasks:
 
 ## Next task
 
-T5: codes. Build it in the design (board "6 Code entry", `design-handoff/CodeEntry.dc.html`).
+Apply the round 1 card changes Lars keeps (docs/CARDS.md, step 5), then play round 2. T5 (codes) is deferred by Lars.
+
+After that, T5: codes. Build it in the design (board "6 Code entry", `design-handoff/CodeEntry.dc.html`).
 
 ## Backlog
 
