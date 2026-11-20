@@ -2727,6 +2727,16 @@ export const MILESTONES: readonly Milestone[] = [
     article: 'Nordisk mobiltelefonsystem (NMT)',
   },
   {
+    // Wikipedia gives 1862 or 1863, saying the sources differ; 1863 is the year usually told, and
+    // Lars chose to keep the card (2026-11-20). Wikidata has no date.
+    qid: 'Q27508434',
+    date: '1863',
+    type: 'oppfinnelse',
+    title: 'Anne Hov lager den første brunosten',
+    description: 'En budeie i Gudbrandsdalen koker fløte inn i mysen og får en fet, søt ost.',
+    article: 'Anne Hov',
+  },
+  {
     // Her first meeting in the Storting, on 17 March 1911 (Wikipedia; Wikidata has no date).
     qid: 'Q1769271',
     date: '1911-03-17',
